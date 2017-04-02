@@ -89,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             success = false
         }
         if !success {
-            if kDebugLog { print("Failed to set audio session category.  Error: \(String(describing: error))") }
+            if kDebugLog { print("Failed to set audio session category.  Error: \(error)") }
         }
         
         // Set audioSession as active
