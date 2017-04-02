@@ -85,7 +85,7 @@ class DataManager {
             if let responseError = error {
                 completion(nil, responseError)
                 
-                if kDebugLog { print("API ERROR: \(error)") }
+                if kDebugLog { print("API ERROR: \(String(describing: error))") }
                 
                 // Stop activity Indicator
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
