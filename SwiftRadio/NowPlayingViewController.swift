@@ -107,7 +107,7 @@ class NowPlayingViewController: UIViewController {
         
     }
     
-    func didBecomeActiveNotificationReceived() {
+    @objc func didBecomeActiveNotificationReceived() {
         // View became active
         updateLabels()
         justBecameActive = true
@@ -319,10 +319,13 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     func resetAlbumArtwork() {
-        track.artworkLoaded = false
-        track.artworkURL = currentStation.stationImageURL
-        updateAlbumArtwork()
-        stationDescLabel.isHidden = false
+        
+        DispatchQueue.main.async {
+            self.track.artworkLoaded = false
+            self.track.artworkURL = self.currentStation.stationImageURL
+            self.updateAlbumArtwork()
+            self.stationDescLabel.isHidden = false
+        }
     }
     
     func updateAlbumArtwork() {
@@ -340,24 +343,27 @@ class NowPlayingViewController: UIViewController {
                 
                 self.downloadTask = self.albumImageView.loadImageWithURL(url: url) { (image) in
                     
-                    // Update track struct
-                    self.track.artworkImage = image
-                    self.track.artworkLoaded = true
-                    
-                    // Turn off network activity indicator
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    //we are now in the network (loadImageWithURL) thread, update GUI on main thread
+                    DispatchQueue.main.async {
+                        // Update track struct
+                        self.track.artworkImage = image
+                        self.track.artworkLoaded = true
                         
-                    // Animate artwork
-                    self.albumImageView.animation = "wobble"
-                    self.albumImageView.duration = 2
-                    self.albumImageView.animate()
-                    self.stationDescLabel.isHidden = true
+                        // Turn off network activity indicator
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        
+                        // Animate artwork
+                        self.albumImageView.animation = "wobble"
+                        self.albumImageView.duration = 2
+                        self.albumImageView.animate()
+                        self.stationDescLabel.isHidden = true
 
-                    // Update lockscreen
-                    self.updateLockScreen()
-                    
-                    // Call delegate function that artwork updated
-                    self.delegate?.artworkDidUpdate(track: self.track)
+                        // Update lockscreen
+                        self.updateLockScreen()
+                        
+                        // Call delegate function that artwork updated
+                        self.delegate?.artworkDidUpdate(track: self.track)
+                    }
                 }
             }
             
@@ -369,21 +375,27 @@ class NowPlayingViewController: UIViewController {
             
         } else if track.artworkURL != "" {
             // Local artwork
-            self.albumImageView.image = UIImage(named: track.artworkURL)
-            track.artworkImage = albumImageView.image
-            track.artworkLoaded = true
-            
-            // Call delegate function that artwork updated
-            self.delegate?.artworkDidUpdate(track: self.track)
-            
+            DispatchQueue.main.async {
+                self.albumImageView.image = UIImage(named: self.track.artworkURL)
+                self.track.artworkImage = self.albumImageView.image
+                self.track.artworkLoaded = true
+                
+                // Call delegate function that artwork updated
+                self.delegate?.artworkDidUpdate(track: self.track)
+            }
         } else {
-            // No Station or API art found, use default art
-            self.albumImageView.image = UIImage(named: "albumArt")
-            track.artworkImage = albumImageView.image
+            DispatchQueue.main.async {
+                // No Station or API art found, use default art
+                self.albumImageView.image = UIImage(named: "albumArt")
+                self.track.artworkImage = self.albumImageView.image
+            }
+            
         }
         
         // Force app to update display
-        self.view.setNeedsDisplay()
+        DispatchQueue.main.async {
+            self.view.setNeedsDisplay()
+        }
     }
 
     // Call LastFM or iTunes API to get album art url
@@ -519,7 +531,7 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     // Example code on handling AVAudio interruptions (e.g. Phone calls)
-    func sessionInterrupted(notification: NSNotification) {
+    @objc func sessionInterrupted(notification: NSNotification) {
         if let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? NSNumber{
             if let type = AVAudioSessionInterruptionType(rawValue: typeValue.uintValue){
                 if type == .began {
@@ -559,7 +571,7 @@ class NowPlayingViewController: UIViewController {
     // MARK: - Detect end of mp3 in case you're using a file instead of a stream
     //*****************************************************************
     
-    func playerItemDidReachEnd(){
+    @objc func playerItemDidReachEnd(){
         if kDebugLog {
             print("playerItemDidReachEnd")
         }
@@ -660,8 +672,13 @@ extension NowPlayingViewController: MFMailComposeViewControllerDelegate {
     }
     
     func showSendMailErrorAlert() {
-        let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
-        sendMailErrorAlert.show()
+        //let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
+        //sendMailErrorAlert.show()
+        
+        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .`default`, handler: { _ in
+            NSLog("The \"OK\" alert occured.")
+        }))
     }
 }
 
