@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var station: RadioStation!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // MPNowPlayingInfoCenter
         UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -81,8 +81,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set AVFoundation category, required for background audio
         var error: NSError?
         var success: Bool
+        let audioSession = AVAudioSession.sharedInstance()
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try audioSession.setCategory(AVAudioSession.Category.playback, mode:AVAudioSession.Mode.default)
             success = true
         } catch let error1 as NSError {
             error = error1
@@ -94,7 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set audioSession as active
         do {
-            try AVAudioSession.sharedInstance().setActive(true)
+            try audioSession.setActive(true)
         } catch let error2 as NSError {
             if kDebugLog { print("audioSession setActive error \(error2)") }
         }
@@ -104,3 +105,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
    
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
+}

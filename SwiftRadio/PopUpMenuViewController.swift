@@ -54,7 +54,7 @@ class PopUpMenuViewController: UIViewController {
         
         // Use your own website here
         if let url = URL(string: "https://www.maxi80.com") {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url,options: [:], completionHandler: nil)
         }
     }
         
@@ -62,7 +62,7 @@ class PopUpMenuViewController: UIViewController {
         
         // Use your own website here
         if let url = URL(string: "https://www.last.fm") {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url,options: [:], completionHandler: nil)
         }
     }
 
@@ -70,7 +70,7 @@ class PopUpMenuViewController: UIViewController {
         
         // Use your own website here
         if let url = URL(string: "https://www.maxi80.com/paypal.htm") {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url,options: [:], completionHandler: nil)
         }
     }
     

@@ -9,6 +9,7 @@
 import UIKit
 import MediaPlayer
 import MessageUI
+import Spring
 
 //*****************************************************************
 // Protocol
@@ -35,7 +36,7 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var songLabel: SpringLabel!
     @IBOutlet weak var stationDescLabel: UILabel!
     @IBOutlet weak var volumeParentView: UIView!
-    @IBOutlet weak var slider = UISlider()
+    @IBOutlet      var slider: UISlider! = UISlider()
     
     var currentStation: RadioStation!
     var downloadTask: URLSessionDownloadTask?
@@ -84,7 +85,7 @@ class NowPlayingViewController: UIViewController {
         // Notification for AVAudioSession Interruption (e.g. Phone call)
         NotificationCenter.default.addObserver(self,
             selector: #selector(NowPlayingViewController.sessionInterrupted),
-            name: Notification.Name.AVAudioSessionInterruption,
+            name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance())
         
         // Check for station change
@@ -120,7 +121,7 @@ class NowPlayingViewController: UIViewController {
             name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
             object: nil)
         NotificationCenter.default.removeObserver(self,
-            name: Notification.Name.AVAudioSessionInterruption,
+            name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance())
     }
     
@@ -293,14 +294,14 @@ class NowPlayingViewController: UIViewController {
         // Setup ImageView
         nowPlayingImageView = UIImageView(image: UIImage(named: "NowPlayingBars-3"))
         nowPlayingImageView.autoresizingMask = []
-        nowPlayingImageView.contentMode = UIViewContentMode.center
+        nowPlayingImageView.contentMode = UIView.ContentMode.center
         
         // Create Animation
         nowPlayingImageView.animationImages = AnimationFrames.createFrames()
         nowPlayingImageView.animationDuration = 0.7
         
         // Create Top BarButton
-        let barButton = UIButton(type: UIButtonType.custom)
+        let barButton = UIButton(type: UIButton.ButtonType.custom)
         barButton.frame = CGRect(x: 0,y: 0,width: 40,height: 40);
         barButton.addSubview(nowPlayingImageView)
         nowPlayingImageView.center = barButton.center
@@ -501,7 +502,10 @@ class NowPlayingViewController: UIViewController {
     func updateLockScreen() {
         
         // Update notification/lock screen
-        let albumArtwork = MPMediaItemArtwork(image: track.artworkImage!)
+        let image = track.artworkImage!
+        let albumArtwork = MPMediaItemArtwork.init(boundsSize: image.size, requestHandler: { (size) -> UIImage in
+            return image
+        })
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [
             MPMediaItemPropertyArtist: track.artist,
@@ -513,7 +517,7 @@ class NowPlayingViewController: UIViewController {
     override func remoteControlReceived(with receivedEvent: UIEvent?) {
         super.remoteControlReceived(with: receivedEvent)
         
-        if receivedEvent!.type == UIEventType.remoteControl {
+        if receivedEvent!.type == UIEvent.EventType.remoteControl {
             
             switch receivedEvent!.subtype {
             case .remoteControlPlay:
@@ -533,7 +537,7 @@ class NowPlayingViewController: UIViewController {
     // Example code on handling AVAudio interruptions (e.g. Phone calls)
     @objc func sessionInterrupted(notification: NSNotification) {
         if let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? NSNumber{
-            if let type = AVAudioSessionInterruptionType(rawValue: typeValue.uintValue){
+            if let type = AVAudioSession.InterruptionType(rawValue: typeValue.uintValue){
                 if type == .began {
                     print("interruption: began")
                     // Add your code here
@@ -675,7 +679,7 @@ extension NowPlayingViewController: MFMailComposeViewControllerDelegate {
         //let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
         //sendMailErrorAlert.show()
         
-        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertControllerStyle.alert)
+        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: .`default`, handler: { _ in
             NSLog("The \"OK\" alert occured.")
         }))
