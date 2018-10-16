@@ -6,12 +6,13 @@ target 'Maxi80' do
   use_frameworks!
 
   # Pods for Maxi80
-
+  
+  pod 'AWSAppSync', ' ~> 2.6.20'
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
 
   target 'Maxi80UITests' do
     inherit! :search_paths
     # Pods for testing
   end
-
+  
 end

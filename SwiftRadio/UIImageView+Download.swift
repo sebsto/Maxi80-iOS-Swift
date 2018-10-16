@@ -8,33 +8,29 @@
 
 import UIKit
 
+
 extension UIImageView {
-    
-    func loadImageWithURL(url: URL, callback: @escaping (UIImage) -> ()) -> URLSessionDownloadTask {
-        let session = URLSession.shared
+    func load(url: URL, callback: @escaping ((UIImage) -> Void)) {
         
-        let downloadTask = session.downloadTask(with: url, completionHandler: {
-            [weak self] url, response, error in
+        // schedule loading of the URL
+        DispatchQueue.global().async { [weak self] in
             
-            if error == nil && url != nil {
-                if let data = NSData(contentsOf: url!) {
-                    if let image = UIImage(data: data as Data) {
-                        
-                        DispatchQueue.main.async(execute: {
-                            
-                            if let strongSelf = self {
-                                strongSelf.image = image
-                                callback(image)
-                            }
-                        })
+            // rely on Data to load the URL
+            if let data = try? Data(contentsOf: url) {
+                
+                // if it returns something
+                if let image = UIImage(data: data) {
+                    
+                    // update the GUI and callback
+                    DispatchQueue.main.async {
+                        self?.image = image
+                        callback(image)
                     }
                 }
             }
-        })
-        
-        downloadTask.resume()
-        return downloadTask
+        }
     }
 }
+
 
 

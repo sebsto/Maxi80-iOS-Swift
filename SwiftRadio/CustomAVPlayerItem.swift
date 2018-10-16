@@ -18,11 +18,12 @@ protocol CustomAVPlayerItemDelegate {
 
 class CustomAVPlayerItem: AVPlayerItem {
     
-    var delegate : CustomAVPlayerItemDelegate?
+    var delegate : CustomAVPlayerItemDelegate
     
-    init(url URL:URL)
+    init(url URL:URL, delegate:CustomAVPlayerItemDelegate)
     {
         if kDebugLog {print("CustomAVPlayerItem.init")}
+        self.delegate = delegate
         super.init(asset: AVAsset(url: URL) , automaticallyLoadedAssetKeys:[])
         addObserver(self, forKeyPath: "timedMetadata", options: NSKeyValueObservingOptions.new, context: nil)
     }
@@ -35,7 +36,7 @@ class CustomAVPlayerItem: AVPlayerItem {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if let avpItem: AVPlayerItem = object as? AVPlayerItem {
             if keyPath == "timedMetadata" {
-                delegate?.onMetaData(avpItem.timedMetadata)
+                delegate.onMetaData(avpItem.timedMetadata)
             }
         }
     }

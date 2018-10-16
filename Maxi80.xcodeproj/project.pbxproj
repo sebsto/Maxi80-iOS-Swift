@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006499BB21762BCE007ABC1D /* Maxi80BackendAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */; };
+		006499BD21762C87007ABC1D /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 006499BC21762C87007ABC1D /* awsconfiguration.json */; };
 		0081BD4E1E76CCF500CBA522 /* CustomAVPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0081BD4D1E76CCF500CBA522 /* CustomAVPlayerItem.swift */; };
 		00EB8A3921529A2100B111F0 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 00EB8A3821529A2100B111F0 /* Podfile */; };
 		00EB8A3B21529F0F00B111F0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00EB8A3A21529F0F00B111F0 /* SwiftyJSON.swift */; };
@@ -39,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Maxi80BackendAPI.swift; sourceTree = "<group>"; };
+		006499BC21762C87007ABC1D /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = awsconfiguration.json; sourceTree = SOURCE_ROOT; };
 		0081BD4D1E76CCF500CBA522 /* CustomAVPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAVPlayerItem.swift; sourceTree = "<group>"; };
 		00EB8A3821529A2100B111F0 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		00EB8A3A21529F0F00B111F0 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
@@ -180,6 +184,8 @@
 		94AC70AF1AD05C7400652982 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				006499BC21762C87007ABC1D /* awsconfiguration.json */,
+				006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */,
 				949BBB3F1ACC9DEE005B7C26 /* DataManager.swift */,
 			);
 			name = Networking;
@@ -313,6 +319,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				006499BD21762C87007ABC1D /* awsconfiguration.json in Resources */,
 				00EB8A3921529A2100B111F0 /* Podfile in Resources */,
 				9409E1241ABF6FEA00312E2B /* Main.storyboard in Resources */,
 				9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */,
@@ -375,12 +382,20 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Maxi80/Pods-Maxi80-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSAppSync/AWSAppSync.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
+				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAppSync.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +418,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				006499BB21762BCE007ABC1D /* Maxi80BackendAPI.swift in Sources */,
 				949E5EB01ACB340200AB6280 /* UIImageView+Download.swift in Sources */,
 				94D260911B45D20000DE671C /* Maxi80-Settings.swift in Sources */,
 				9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */,

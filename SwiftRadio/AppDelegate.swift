@@ -8,14 +8,28 @@
 
 import UIKit
 import MediaPlayer
+import AWSAppSync
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var station: RadioStation!
-
+    var appSyncClient: AWSAppSyncClient?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        //appsync offline database
+        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
+        
+        //initialize app sync
+        do {
+            //AppSync configuration & client initialization
+            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),databaseURL: databaseURL)
+            appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
+        } catch {
+            print("Error initializing appsync client. \(error)")
+        }
         
         // MPNowPlayingInfoCenter
         UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -24,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().barStyle = .black
         
         //initialize radio station data
-        //TODO fetch these data from an API call on api.maxi80.net
+        // these are the default
         station = RadioStation(
             name: "Maxi80",
             streamURL: "https://audio1.maxi80.com",
@@ -32,10 +46,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             desc: "La radio de toute une génération",
             longDesc: "Le meilleur de la musique des années 80"
         )
+        //fetch these data from an API call on api.maxi80.net
+        print("Calling backend to get station details")
+        appSyncClient?.fetch(query: StationQuery()) { (result, error) in
+            if error != nil {
+                print(error?.localizedDescription ?? "")
+                return
+            }
+            self.station = RadioStation(
+                name: result?.data?.station?.name ?? self.station.stationName,
+                streamURL: result?.data?.station?.streamUrl ?? self.station.stationStreamURL,
+                imageURL: result?.data?.station?.imageUrl  ?? self.station.stationImageURL,
+                desc: result?.data?.station?.desc  ?? self.station.stationDesc,
+                longDesc: result?.data?.station?.longDesc ?? self.station.stationLongDesc
+            )
+            print(result?.data?.station ?? "station is nil")
+        }
         
         // Set AVFoundation category, required for background audio
         setupAudioService()
-        
         
         return true
     }
