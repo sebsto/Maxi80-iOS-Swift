@@ -28,7 +28,6 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet      var slider: UISlider! = UISlider()
     
     var currentStation: RadioStation!
-    var iPhone4 = false
     var nowPlayingImageView: UIImageView!
     var radioPlayer = AVPlayer()
     var track: Track! = Track()
@@ -167,7 +166,6 @@ class NowPlayingViewController: UIViewController {
         let deviceHeight = self.view.bounds.height
         
         if deviceHeight == 480 {
-            iPhone4 = true
             albumHeightConstraint.constant = 106
             view.updateConstraints()
         } else if deviceHeight == 667 {
