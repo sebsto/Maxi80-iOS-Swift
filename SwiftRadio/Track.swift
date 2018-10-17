@@ -17,6 +17,4 @@ struct Track {
 	var artist: String = ""
 	var artworkURL: String = ""
 	var artworkImage = UIImage(named: "station-maxi80")
-	var artworkLoaded = false
-	var isPlaying: Bool = false
 }

@@ -24,7 +24,6 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var pauseButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var songLabel: SpringLabel!
-    @IBOutlet weak var stationDescLabel: UILabel!
     @IBOutlet weak var volumeParentView: UIView!
     @IBOutlet      var slider: UISlider! = UISlider()
     
@@ -34,6 +33,9 @@ class NowPlayingViewController: UIViewController {
     var radioPlayer = AVPlayer()
     var track: Track! = Track()
     var mpVolumeSlider = UISlider()
+    
+    var streamURL : URL!
+    var streamItem : CustomAVPlayerItem!
     
     //*****************************************************************
     // MARK: - ViewDidLoad
@@ -51,6 +53,7 @@ class NowPlayingViewController: UIViewController {
             
         // Set AlbumArtwork Constraints
         optimizeForDeviceSize()
+        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
 
         // Set View Title
         self.title = currentStation.stationName
@@ -70,17 +73,13 @@ class NowPlayingViewController: UIViewController {
             name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance())
         
-        let streamURL = URL(string: currentStation.stationStreamURL)
-        let streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
-        
-        DispatchQueue.main.async {
-            // prevent the player from "stalling"
-            self.radioPlayer.replaceCurrentItem(with: streamItem)
-            self.radioPlayer.play()
-        }
-        
         // Setup slider
         setupVolumeSlider()
+
+        // Setup our stream
+        self.streamURL = URL(string: currentStation.stationStreamURL)
+        self.streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
+        self.playPressed()
         
     }
     
@@ -127,11 +126,12 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     @IBAction func playPressed() {
-        track.isPlaying = true
-        playButtonEnable(enabled: false)
+        radioPlayer.replaceCurrentItem(with: self.streamItem)
         radioPlayer.play()
+
+        playButtonEnable(enabled: false)
         updateLabels()
-        
+
         // songLabel Animation
         songLabel.animation = "flash"
         songLabel.animate()
@@ -142,14 +142,15 @@ class NowPlayingViewController: UIViewController {
     }
     
     @IBAction func pausePressed() {
-        track.isPlaying = false
-        
+        radioPlayer.pause()
+        radioPlayer.replaceCurrentItem(with: nil)
+
         playButtonEnable()
         
-        radioPlayer.pause()
-        updateLabels(statusMessage: "Station Paused...")
-        nowPlayingImageView.stopAnimating()
+        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
         
+        updateLabels(statusMessage: "Station stopped...")
+        nowPlayingImageView.stopAnimating()
     }
     
     @IBAction func volumeChanged(_ sender:UISlider) {
@@ -193,24 +194,15 @@ class NowPlayingViewController: UIViewController {
             }
         }
         
-        // Hide station description when album art is displayed or on iPhone 4
-        if track.artworkLoaded || iPhone4 {
-            stationDescLabel.isHidden = true
-        } else {
-            stationDescLabel.isHidden = false
-            stationDescLabel.text = currentStation.stationDesc
-        }
     }
     
     func playButtonEnable(enabled: Bool = true) {
         if enabled {
             playButton.isEnabled = true
             pauseButton.isEnabled = false
-            track.isPlaying = false
         } else {
             playButton.isEnabled = false
             pauseButton.isEnabled = true
-            track.isPlaying = true
         }
     }
     
@@ -244,6 +236,24 @@ class NowPlayingViewController: UIViewController {
     // MARK: - Album Art
     //*****************************************************************
     
+    // update the image on the screen
+    func updateAlbumImage(url : URL) {
+        
+        // schedule loading of the URL
+        DispatchQueue.global().async {
+                
+            // rely on Data to load the URL
+            if let data = try? Data(contentsOf: url) {
+                
+                // if it returns something
+                if let image = UIImage(data: data) {
+                    
+                    // update the GUI
+                    self.updateAlbumImage(image: image)
+                }
+            }
+        }
+    }
     
     // update the image on the screen 
     func updateAlbumImage(image : UIImage) {
@@ -253,7 +263,7 @@ class NowPlayingViewController: UIViewController {
             
             // Update track struct
             self.track.artworkImage = image
-            self.track.artworkLoaded = true
+            self.albumImageView.image = image
             
             // Turn off network activity indicator
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -262,7 +272,6 @@ class NowPlayingViewController: UIViewController {
             self.albumImageView.animation = "wobble"
             self.albumImageView.duration = 2
             self.albumImageView.animate()
-            self.stationDescLabel.isHidden = true
             
             // Update lockscreen
             self.updateLockScreen()
@@ -294,14 +303,11 @@ class NowPlayingViewController: UIViewController {
             }
             print(result?.data?.artwork ?? "artwork is nil")
             self.track.artworkURL = result?.data?.artwork?.url ?? ""
-            self.track.artworkLoaded = true
             
             // if the API returns non error, it always return an URL
             // load the image from the URL we received
             if let url = URL(string: self.track.artworkURL) {
-                _ = self.albumImageView.load(url: url) { (image) in
-                    self.updateAlbumImage(image: image)
-                }
+                self.updateAlbumImage(url: url)
             }
         }
     }
@@ -441,11 +447,11 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
             }
             
             // Set artist & songvariables
-            track.artist = stringParts[0].decodeAll()
-            track.title = stringParts[0].decodeAll()
+            track.artist = stringParts[0]//.decodeAll()
+            track.title = stringParts[0]//.decodeAll()
             
             if stringParts.count > 1 {
-                track.title = stringParts[1].decodeAll()
+                track.title = stringParts[1]//.decodeAll()
             }
             
             DispatchQueue.main.async {

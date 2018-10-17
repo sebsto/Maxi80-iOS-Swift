@@ -35,6 +35,7 @@ class CustomAVPlayerItem: AVPlayerItem {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if let avpItem: AVPlayerItem = object as? AVPlayerItem {
+            print("AVPlayerItem received \(String(describing: keyPath))")
             if keyPath == "timedMetadata" {
                 delegate.onMetaData(avpItem.timedMetadata)
             }

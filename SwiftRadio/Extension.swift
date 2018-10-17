@@ -27,10 +27,3 @@ extension Bundle {
     }
     
 }
-
-extension String {
-    func decodeAll() -> String{
-        let dataStr = self.data(using: String.Encoding.isoLatin1)
-        return String(data: dataStr!, encoding: String.Encoding.utf8)!
-    }
-}
