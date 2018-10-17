@@ -43,9 +43,6 @@ class NowPlayingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Setup handoff functionality - GH
-        setupUserActivity()
-        
         // Add your radio station information here:
         let theApp = UIApplication.shared.delegate as! AppDelegate
         currentStation =  theApp.station //query radio station details from App Delegate
@@ -53,6 +50,7 @@ class NowPlayingViewController: UIViewController {
         // Set AlbumArtwork Constraints
         optimizeForDeviceSize()
         self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
+        updateLabels(artist: currentStation!.stationName, track: currentStation!.stationDesc)
 
         // Set View Title
         self.title = currentStation.stationName
@@ -61,10 +59,10 @@ class NowPlayingViewController: UIViewController {
         createNowPlayingAnimation()
         
         // Notification for when app becomes active
-        NotificationCenter.default.addObserver(self,
-            selector: #selector(NowPlayingViewController.didBecomeActiveNotificationReceived),
-            name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
-            object: nil)
+//        NotificationCenter.default.addObserver(self,
+//            selector: #selector(NowPlayingViewController.didBecomeActiveNotificationReceived),
+//            name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
+//            object: nil)
         
         // Notification for AVAudioSession Interruption (e.g. Phone call)
         NotificationCenter.default.addObserver(self,
@@ -82,11 +80,11 @@ class NowPlayingViewController: UIViewController {
         
     }
     
-    @objc func didBecomeActiveNotificationReceived() {
-        // View became active
-        updateLabels()
-        updateAlbumArtwork()
-    }
+//    @objc func didBecomeActiveNotificationReceived() {
+//        // View became active
+//        updateLabels(artist: self.track.artist, track: self.track.title)
+//        updateAlbumArtwork()
+//    }
     
     deinit {
         // Be a good citizen
@@ -137,6 +135,8 @@ class NowPlayingViewController: UIViewController {
         // Start NowPlaying Animation
         nowPlayingImageView.startAnimating()
         
+        // update label and artwork will be done automatically when we will receive meta data
+        
     }
     
     @IBAction func pausePressed() {
@@ -147,7 +147,7 @@ class NowPlayingViewController: UIViewController {
         
         self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
         
-        updateLabels(statusMessage: "Press play button to start")
+        updateLabels(artist: currentStation.stationName, track:currentStation.stationDesc)
         nowPlayingImageView.stopAnimating()
     }
     
@@ -176,21 +176,9 @@ class NowPlayingViewController: UIViewController {
         }
     }
     
-    func updateLabels(statusMessage: String = "") {
-        
-        if statusMessage != "" {
-            // There's a an interruption or pause in the audio queue
-            songLabel.text = statusMessage
-            artistLabel.text = currentStation.stationName
-            
-        } else {
-            // Radio is (hopefully) streaming properly
-            if track != nil {
-                songLabel.text = track.title
-                artistLabel.text = track.artist
-            }
-        }
-        
+    func updateLabels(artist: String, track: String) {
+        songLabel.text = artist
+        artistLabel.text = track
     }
     
     func playButtonEnable(enabled: Bool = true) {
@@ -389,27 +377,6 @@ class NowPlayingViewController: UIViewController {
         }
     }
     
-    //*****************************************************************
-    // MARK: - Handoff Functionality - GH
-    //*****************************************************************
-    
-    func setupUserActivity() {
-        let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb ) //"com.graemeharrison.handoff.googlesearch" //NSUserActivityTypeBrowsingWeb
-        userActivity = activity
-        let url = "https://www.google.com/search?q=\(self.artistLabel.text!)+\(self.songLabel.text!)"
-        let urlStr = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        let searchURL : URL = URL(string: urlStr!)!
-        activity.webpageURL = searchURL
-        userActivity?.becomeCurrent()
-    }
-    
-    override func updateUserActivityState(_ activity: NSUserActivity) {
-        let url = "https://www.google.com/search?q=\(self.artistLabel.text!)+\(self.songLabel.text!)"
-        let urlStr = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        let searchURL : URL = URL(string: urlStr!)!
-        activity.webpageURL = searchURL
-        super.updateUserActivityState(activity)
-    }
     
     //*****************************************************************
     // MARK: - Detect end of mp3 in case you're using a file instead of a stream
@@ -444,11 +411,11 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
             }
             
             // Set artist & songvariables
-            track.artist = stringParts[0]//.decodeAll()
-            track.title = stringParts[0]//.decodeAll()
+            track.artist = stringParts[0]
+            track.title = ""
             
             if stringParts.count > 1 {
-                track.title = stringParts[1]//.decodeAll()
+                track.title = stringParts[1]
             }
             
             DispatchQueue.main.async {
@@ -456,16 +423,16 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
                         print("METADATA artist: \(self.track.artist) | title: \(self.track.title)")
                     }
                     // Update Labels
+                
                     if self.track.artist == "" && self.track.title == "" {
                         // when no meta data received, use station name instead
-                        self.artistLabel.text = self.currentStation.stationDesc
-                        self.songLabel.text   = self.currentStation.stationName
+                        self.updateLabels(artist: self.currentStation.stationName,
+                                          track: self.currentStation.stationDesc)
                     } else {
-                        self.artistLabel.text = self.track.artist
-                        self.songLabel.text   = self.track.title
+                        self.updateLabels(artist: self.track.artist,
+                                          track: self.track.title)
                     }
-                    self.updateUserActivityState(self.userActivity!)
-                    
+                
                     // songLabel animation
                     self.songLabel.animation = "zoomIn"
                     self.songLabel.duration = 1.5
@@ -476,7 +443,6 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
                     //self.delegate?.songMetaDataDidUpdate(track: self.track)
                     
                     // Query API for album art
-                    //self.resetAlbumArtwork()
                     self.updateAlbumArtwork()
                 
             }
