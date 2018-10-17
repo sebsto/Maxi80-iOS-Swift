@@ -21,9 +21,9 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var albumHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var albumImageView: SpringImageView!
     @IBOutlet weak var artistLabel: UILabel!
+    @IBOutlet weak var songLabel: SpringLabel!
     @IBOutlet weak var pauseButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var songLabel: SpringLabel!
     @IBOutlet weak var volumeParentView: UIView!
     @IBOutlet      var slider: UISlider! = UISlider()
     
@@ -129,7 +129,6 @@ class NowPlayingViewController: UIViewController {
         radioPlayer.play()
 
         playButtonEnable(enabled: false)
-        updateLabels()
 
         // songLabel Animation
         songLabel.animation = "flash"
@@ -148,7 +147,7 @@ class NowPlayingViewController: UIViewController {
         
         self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
         
-        updateLabels(statusMessage: "Station stopped...")
+        updateLabels(statusMessage: "Press play button to start")
         nowPlayingImageView.stopAnimating()
     }
     
