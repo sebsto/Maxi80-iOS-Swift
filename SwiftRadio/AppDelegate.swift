@@ -45,74 +45,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         AWSServiceManager.default().defaultServiceConfiguration = configuration
 
-        // Retrieve an anonymous Amazon Cognito ID
-        self.credentialsProvider!.getIdentityId().continueWith { (task: AWSTask!) -> AnyObject? in
-            
-            if (task.error != nil) {
-                print("Error getting CognitoID: " + task.error!.localizedDescription )
-                
-            } else {
-                // the task result will contain the identity id
-                self.cognitoID = task.result as String?
-                if kDebugLog { print("CognitoID = \(String(describing: self.cognitoID))") }
-                
-                //appsync offline database
-                let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
-                
-                //initialize app sync
-                do {
-                    //AppSync configuration & client initialization
-                    let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
-                                                                          credentialsProvider : self.credentialsProvider,
-                                                                          databaseURL: databaseURL)
-                    self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
-                } catch {
-                    print("Error initializing appsync client. \(error)")
-                }
-                
-                //fetch radio station data from an API call on api.maxi80.net
-                if kDebugLog { print("Calling backend to get station details") }
-                self.appSyncClient?.fetch(query: StationQuery(),cachePolicy: .fetchIgnoringCacheData) { (result, error) in
-                    if error != nil {
-                        print("Error when calling Radio Station Data API")
-                        print(error?.localizedDescription ?? "")
-                    } else {
-                        guard let station = result?.data?.station else {
-                            print("Received nil data for station, using default value")
-                            
-                            //initialize radio station data with the default
-                            self.station = RadioStation(
-                                name: "Maxi80",
-                                streamURL: "https://audio1.maxi80.com",
-                                imageURL: "station-maxi80.png",
-                                desc: "La radio de toute une génération",
-                                longDesc: "Le meilleur de la musique des années 80"
-                            )
-                            
-                            // notify listeners data are available (only NowPlayingViewController at this stage)
-                            NotificationCenter.default.post(name: self.radioStationDataNotificationName,
-                                                            object: self.station)
-                            return
-                        }
-                        
-                        if kDebugLog { print("Radio Station data received : \(station)") }
-                        self.station = RadioStation(
-                            name: station.name,
-                            streamURL: station.streamUrl,
-                            imageURL: station.imageUrl,
-                            desc: station.desc,
-                            longDesc: station.longDesc
-                        )
-                        
-                        // notify listeners data are available (only NowPlayingViewController at this stage)
-                        NotificationCenter.default.post(name: self.radioStationDataNotificationName,
-                                                        object: self.station)
-                    }
-                }
 
+        //appsync offline database
+        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
+        
+        //initialize app sync
+        do {
+            //AppSync configuration & client initialization
+            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
+                                                                  credentialsProvider : self.credentialsProvider,
+                                                                  databaseURL: databaseURL)
+            self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
+        } catch {
+            print("Error initializing appsync client. \(error)")
+        }
+        
+        //fetch radio station data from an API call on api.maxi80.net
+        if kDebugLog { print("Calling backend to get station details") }
+        self.appSyncClient?.fetch(query: StationQuery(),
+                                  cachePolicy: .fetchIgnoringCacheData) {
+            (result, error) in
+                                    
+            if error != nil {
+                print("Error when calling Radio Station Data API")
+                print(error?.localizedDescription ?? "")
+            } else {
+                guard let station = result?.data?.station else {
+                    print("Received nil data for station, using default value")
+                    
+                    //initialize radio station data with the default
+                    self.station = RadioStation(
+                        name: "Maxi80",
+                        streamURL: "https://audio1.maxi80.com",
+                        imageURL: "station-maxi80.png",
+                        desc: "La radio de toute une génération",
+                        longDesc: "Le meilleur de la musique des années 80"
+                    )
+                    
+                    // notify listeners data are available (only NowPlayingViewController at this stage)
+                    NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                    object: self.station)
+                    return
+                }
+                
+                if kDebugLog { print("Radio Station data received : \(station)") }
+                self.station = RadioStation(
+                    name: station.name,
+                    streamURL: station.streamUrl,
+                    imageURL: station.imageUrl,
+                    desc: station.desc,
+                    longDesc: station.longDesc
+                )
+                
+                // notify listeners data are available (only NowPlayingViewController at this stage)
+                NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                object: self.station)
             }
-            return nil
-        } //.waitUntilFinished() // DO NOT block main UI thread 
+        }
 
         return true
     }

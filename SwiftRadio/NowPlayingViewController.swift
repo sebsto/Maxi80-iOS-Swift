@@ -300,36 +300,16 @@ class NowPlayingViewController: UIViewController {
         let appSyncClient = appDelegate.appSyncClient
         
         print("Going to call backend artwork for \(self.track.artist) and \(self.track.title)")
-        appSyncClient?.fetch(query: ArtworkQuery(artist:self.track.artist, track:self.track.title), cachePolicy: .fetchIgnoringCacheData)  { (result, error) in
+        appSyncClient?.fetch(query: ArtworkQuery(artist:self.track.artist, track:self.track.title),
+                             cachePolicy: .fetchIgnoringCacheData)  {
+                                (result, error) in
+                                
             if error != nil {
                 
                 let e = error! as! AWSAppSyncClientError
                 let response = e.response
                 print(response!)
-                
-                if ( self.retry <= 2 && (response?.statusCode == 401 || response?.statusCode == 403)) {
-                
-                    // when error is 'forbidden', try to refresh Cognito ID and try again
-                    let theApp = UIApplication.shared.delegate as! AppDelegate
-                    theApp.credentialsProvider!.getIdentityId().continueWith { (task: AWSTask!) -> AnyObject? in
-                        
-                        if (task.error != nil) {
-                            print("Error getting CognitoID: " + task.error!.localizedDescription )
-                            
-                        } else {
-                            appDelegate.cognitoID = task.result as String?
-                            if kDebugLog { print("CognitoID = \(String(describing: appDelegate.cognitoID))") }
-                            self.retry = self.retry + 1;
-                            // exponential wait
-                            sleep(UInt32(self.retry))
-                            self.loadAlbumArtwork();
-                        }
-                        return nil
-                    }
-                } else {
-                    print("load artwork returned non 400 error or retry exceeded")
-                }
-                
+                                
             } else {
                 
                 self.retry = 0;
