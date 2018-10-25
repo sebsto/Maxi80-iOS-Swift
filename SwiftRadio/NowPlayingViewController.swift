@@ -33,67 +33,86 @@ class NowPlayingViewController: UIViewController {
     var track: Track! = Track()
     var mpVolumeSlider = UISlider()
     
-    var streamURL : URL!
     var streamItem : CustomAVPlayerItem!
     
+    // counter for ArtWork load retry
+    var retry = 0;
+        
     //*****************************************************************
     // MARK: - ViewDidLoad
     //*****************************************************************
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Add your radio station information here:
         let theApp = UIApplication.shared.delegate as! AppDelegate
-        currentStation =  theApp.station //query radio station details from App Delegate
-            
-        // Set AlbumArtwork Constraints
-        optimizeForDeviceSize()
-        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
-        updateLabels(artist: currentStation!.stationName, track: currentStation!.stationDesc)
 
-        // Set View Title
-        self.title = currentStation.stationName
-        
         // Create Now Playing BarItem
         createNowPlayingAnimation()
         
-        // Notification for when app becomes active
-//        NotificationCenter.default.addObserver(self,
-//            selector: #selector(NowPlayingViewController.didBecomeActiveNotificationReceived),
-//            name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
-//            object: nil)
+
+        // add ourselves as observer to benotified when radio station is loaded
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onDidReceiveRadioStationData(_:)),
+                                               name: theApp.radioStationDataNotificationName,
+                                               object: nil)
         
         // Notification for AVAudioSession Interruption (e.g. Phone call)
         NotificationCenter.default.addObserver(self,
-            selector: #selector(NowPlayingViewController.sessionInterrupted),
-            name: AVAudioSession.interruptionNotification,
-            object: AVAudioSession.sharedInstance())
+                                               selector: #selector(NowPlayingViewController.sessionInterrupted),
+                                               name: AVAudioSession.interruptionNotification,
+                                               object: AVAudioSession.sharedInstance())
         
         // Setup slider
         setupVolumeSlider()
 
-        // Setup our stream
-        self.streamURL = URL(string: currentStation.stationStreamURL)
-        self.streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
-        self.playPressed()
+        // Set AlbumArtwork Constraints
+        optimizeForDeviceSize()
+        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
+
+        currentStation =  theApp.station //query radio station details from App Delegatelet
+        guard currentStation != nil else {
+            // current station is not initialized yet.
+            if kDebugLog { print("Current Station is not initialized yet") }
+            return
+        }
         
+        // default logic to handle radio station data
+        onDidReceiveRadioStationData(Notification(name: theApp.radioStationDataNotificationName))
     }
-    
-//    @objc func didBecomeActiveNotificationReceived() {
-//        // View became active
-//        updateLabels(artist: self.track.artist, track: self.track.title)
-//        updateAlbumArtwork()
-//    }
     
     deinit {
         // Be a good citizen
+        let theApp = UIApplication.shared.delegate as! AppDelegate
+
         NotificationCenter.default.removeObserver(self,
-            name: Notification.Name("UIApplicationDidBecomeActiveNotification"),
+            name: theApp.radioStationDataNotificationName,
             object: nil)
         NotificationCenter.default.removeObserver(self,
             name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance())
+    }
+    
+    @objc func onDidReceiveRadioStationData(_ notification:Notification) {
+
+        // do not use the notification object has it might be nil
+        
+        let theApp = UIApplication.shared.delegate as! AppDelegate
+        currentStation = theApp.station;
+        
+        // update UI on main thread
+        DispatchQueue.main.async {
+
+            // update labels with station name
+            self.updateLabels(artist: self.currentStation.stationName, track: self.currentStation.stationDesc)
+            
+            // Set View Title
+            self.title = self.currentStation.stationName
+            
+            // Setup our stream
+            let streamURL = URL(string: self.currentStation.stationStreamURL)
+            self.streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
+            self.playPressed()
+        }
     }
     
     //*****************************************************************
@@ -265,7 +284,7 @@ class NowPlayingViewController: UIViewController {
     }
 
     // load the artwork from our backend API
-    func updateAlbumArtwork() {
+    func loadAlbumArtwork() {
         
         if (self.track.artist == "") && (self.track.artist == "") {
             print("no artist nor track name to fetch artwork")
@@ -283,16 +302,50 @@ class NowPlayingViewController: UIViewController {
         print("Going to call backend artwork for \(self.track.artist) and \(self.track.title)")
         appSyncClient?.fetch(query: ArtworkQuery(artist:self.track.artist, track:self.track.title), cachePolicy: .fetchIgnoringCacheData)  { (result, error) in
             if error != nil {
-                print(error?.localizedDescription ?? "")
-                return
-            }
-            print(result?.data?.artwork ?? "artwork is nil")
-            self.track.artworkURL = result?.data?.artwork?.url ?? ""
-            
-            // if the API returns non error, it always return an URL
-            // load the image from the URL we received
-            if let url = URL(string: self.track.artworkURL) {
-                self.updateAlbumImage(url: url)
+                
+                let e = error! as! AWSAppSyncClientError
+                let response = e.response
+                print(response!)
+                
+                if ( self.retry <= 2 && (response?.statusCode == 401 || response?.statusCode == 403)) {
+                
+                    // when error is 'forbidden', try to refresh Cognito ID and try again
+                    let theApp = UIApplication.shared.delegate as! AppDelegate
+                    theApp.credentialsProvider!.getIdentityId().continueWith { (task: AWSTask!) -> AnyObject? in
+                        
+                        if (task.error != nil) {
+                            print("Error getting CognitoID: " + task.error!.localizedDescription )
+                            
+                        } else {
+                            appDelegate.cognitoID = task.result as String?
+                            if kDebugLog { print("CognitoID = \(String(describing: appDelegate.cognitoID))") }
+                            self.retry = self.retry + 1;
+                            // exponential wait
+                            sleep(UInt32(self.retry))
+                            self.loadAlbumArtwork();
+                        }
+                        return nil
+                    }
+                } else {
+                    print("load artwork returned non 400 error or retry exceeded")
+                }
+                
+            } else {
+                
+                self.retry = 0;
+                guard let artwork = result?.data?.artwork else {
+                    print("artwork is nil")
+                    return
+                }
+                print(artwork)
+                
+                // if the API returns non error, it always return an URL
+                self.track.artworkURL = artwork.url!
+
+                // load the image from the URL we received
+                if let url = URL(string: self.track.artworkURL) {
+                    self.updateAlbumImage(url: url)
+                }
             }
         }
     }
@@ -443,7 +496,8 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
                     //self.delegate?.songMetaDataDidUpdate(track: self.track)
                     
                     // Query API for album art
-                    self.updateAlbumArtwork()
+                    self.retry = 0;
+                    self.loadAlbumArtwork()
                 
             }
         }

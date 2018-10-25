@@ -8,64 +8,112 @@
 
 import UIKit
 import MediaPlayer
+
 import AWSAppSync
+
+//https://aws.amazon.com/blogs/mobile/using-amazon-cognito-with-swift-sample-app-developer-guide-and-more/
+import AWSCore
+import AWSCognito
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var station: RadioStation!
+    var cognitoID : String?
     var appSyncClient: AWSAppSyncClient?
+    var credentialsProvider : AWSCognitoCredentialsProvider?
     
+    let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        //appsync offline database
-        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
-        
-        //initialize app sync
-        do {
-            //AppSync configuration & client initialization
-            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),databaseURL: databaseURL)
-            appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
-        } catch {
-            print("Error initializing appsync client. \(error)")
-        }
         
         // MPNowPlayingInfoCenter
         UIApplication.shared.beginReceivingRemoteControlEvents()
         
         // Make status bar white
         UINavigationBar.appearance().barStyle = .black
-        
-        //initialize radio station data
-        // these are the default
-        station = RadioStation(
-            name: "Maxi80",
-            streamURL: "https://audio1.maxi80.com",
-            imageURL: "station-maxi80.png",
-            desc: "La radio de toute une génération",
-            longDesc: "Le meilleur de la musique des années 80"
-        )
-        //fetch these data from an API call on api.maxi80.net
-        print("Calling backend to get station details")
-        appSyncClient?.fetch(query: StationQuery()) { (result, error) in
-            if error != nil {
-                print(error?.localizedDescription ?? "")
-                return
-            }
-            self.station = RadioStation(
-                name: result?.data?.station?.name ?? self.station.stationName,
-                streamURL: result?.data?.station?.streamUrl ?? self.station.stationStreamURL,
-                imageURL: result?.data?.station?.imageUrl  ?? self.station.stationImageURL,
-                desc: result?.data?.station?.desc  ?? self.station.stationDesc,
-                longDesc: result?.data?.station?.longDesc ?? self.station.stationLongDesc
-            )
-            print(result?.data?.station ?? "station is nil")
-        }
-        
+
         // Set AVFoundation category, required for background audio
         setupAudioService()
         
+        // Initialize the Amazon Cognito credentials provider
+       self.credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
+                                                                identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
+
+        let configuration = AWSServiceConfiguration(region:.EUWest1, credentialsProvider:credentialsProvider)
+        
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+
+        // Retrieve an anonymous Amazon Cognito ID
+        self.credentialsProvider!.getIdentityId().continueWith { (task: AWSTask!) -> AnyObject? in
+            
+            if (task.error != nil) {
+                print("Error getting CognitoID: " + task.error!.localizedDescription )
+                
+            } else {
+                // the task result will contain the identity id
+                self.cognitoID = task.result as String?
+                if kDebugLog { print("CognitoID = \(String(describing: self.cognitoID))") }
+                
+                //appsync offline database
+                let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
+                
+                //initialize app sync
+                do {
+                    //AppSync configuration & client initialization
+                    let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
+                                                                          credentialsProvider : self.credentialsProvider,
+                                                                          databaseURL: databaseURL)
+                    self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
+                } catch {
+                    print("Error initializing appsync client. \(error)")
+                }
+                
+                //fetch radio station data from an API call on api.maxi80.net
+                if kDebugLog { print("Calling backend to get station details") }
+                self.appSyncClient?.fetch(query: StationQuery(),cachePolicy: .fetchIgnoringCacheData) { (result, error) in
+                    if error != nil {
+                        print("Error when calling Radio Station Data API")
+                        print(error?.localizedDescription ?? "")
+                    } else {
+                        guard let station = result?.data?.station else {
+                            print("Received nil data for station, using default value")
+                            
+                            //initialize radio station data with the default
+                            self.station = RadioStation(
+                                name: "Maxi80",
+                                streamURL: "https://audio1.maxi80.com",
+                                imageURL: "station-maxi80.png",
+                                desc: "La radio de toute une génération",
+                                longDesc: "Le meilleur de la musique des années 80"
+                            )
+                            
+                            // notify listeners data are available (only NowPlayingViewController at this stage)
+                            NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                            object: self.station)
+                            return
+                        }
+                        
+                        if kDebugLog { print("Radio Station data received : \(station)") }
+                        self.station = RadioStation(
+                            name: station.name,
+                            streamURL: station.streamUrl,
+                            imageURL: station.imageUrl,
+                            desc: station.desc,
+                            longDesc: station.longDesc
+                        )
+                        
+                        // notify listeners data are available (only NowPlayingViewController at this stage)
+                        NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                        object: self.station)
+                    }
+                }
+
+            }
+            return nil
+        } //.waitUntilFinished() // DO NOT block main UI thread 
+
         return true
     }
 
@@ -119,23 +167,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             success = false
         }
         if !success {
-            if kDebugLog { print("Failed to set audio session category.  Error: \(String(describing: error))") }
+            print("Failed to set audio session category.  Error: \(String(describing: error))")
         }
         
         // Set audioSession as active
         do {
             try audioSession.setActive(true)
         } catch let error2 as NSError {
-            if kDebugLog { print("audioSession setActive error \(error2)") }
+            print("audioSession setActive error \(error2)")
         }
     }
     
 
    
-}
-
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
 }

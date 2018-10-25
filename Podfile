@@ -7,7 +7,10 @@ target 'Maxi80' do
 
   # Pods for Maxi80
   
-  pod 'AWSAppSync', ' ~> 2.6.20'
+  pod 'AWSAppSync', ' ~> 2.6.21'
+  pod 'AWSCore', '~> 2.6.29'
+  pod 'AWSCognito', '~> 2.6.29'
+  
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
 
   target 'Maxi80UITests' do
