@@ -3,3 +3,9 @@
 *.xcscmblueprint
 xcuserdata
 graphics/**
+distribution.p12
+Pods/**
+awsconfiguration**
+.amplifyrc
+amplify/*
+.graphqlconfig.yml
