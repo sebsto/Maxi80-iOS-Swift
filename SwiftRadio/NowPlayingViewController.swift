@@ -28,7 +28,6 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet      var slider: UISlider! = UISlider()
     
     var currentStation: RadioStation!
-    var nowPlayingImageView: UIImageView!
     var radioPlayer = AVPlayer()
     var track: Track! = Track()
     var mpVolumeSlider = UISlider()
@@ -46,11 +45,7 @@ class NowPlayingViewController: UIViewController {
         super.viewDidLoad()
         let theApp = UIApplication.shared.delegate as! AppDelegate
 
-        // Create Now Playing BarItem
-        createNowPlayingAnimation()
-        
-
-        // add ourselves as observer to benotified when radio station is loaded
+        // add ourselves as observer to be notified when radio station is loaded
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(onDidReceiveRadioStationData(_:)),
                                                name: theApp.radioStationDataNotificationName,
@@ -148,12 +143,9 @@ class NowPlayingViewController: UIViewController {
         playButtonEnable(enabled: false)
 
         // songLabel Animation
-        songLabel.animation = "flash"
+        songLabel.animation = "fadein"
         songLabel.animate()
-        
-        // Start NowPlaying Animation
-        nowPlayingImageView.startAnimating()
-        
+
         // update label and artwork will be done automatically when we will receive meta data
         
     }
@@ -167,7 +159,6 @@ class NowPlayingViewController: UIViewController {
         self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
         
         updateLabels(artist: currentStation.stationName, track:currentStation.stationDesc)
-        nowPlayingImageView.stopAnimating()
     }
     
     @IBAction func volumeChanged(_ sender:UISlider) {
@@ -208,32 +199,6 @@ class NowPlayingViewController: UIViewController {
             playButton.isEnabled = false
             pauseButton.isEnabled = true
         }
-    }
-    
-    func createNowPlayingAnimation() {
-        
-        // Setup ImageView
-        nowPlayingImageView = UIImageView(image: UIImage(named: "NowPlayingBars-3"))
-        nowPlayingImageView.autoresizingMask = []
-        nowPlayingImageView.contentMode = UIView.ContentMode.center
-        
-        // Create Animation
-        nowPlayingImageView.animationImages = AnimationFrames.createFrames()
-        nowPlayingImageView.animationDuration = 0.7
-        
-        // Create Top BarButton
-        let barButton = UIButton(type: UIButton.ButtonType.custom)
-        barButton.frame = CGRect(x: 0,y: 0,width: 40,height: 40);
-        barButton.addSubview(nowPlayingImageView)
-        nowPlayingImageView.center = barButton.center
-        
-        let barItem = UIBarButtonItem(customView: barButton)
-        self.navigationItem.rightBarButtonItem = barItem
-        
-    }
-    
-    func startNowPlayingAnimation() {
-        nowPlayingImageView.startAnimating()
     }
     
     //*****************************************************************
@@ -431,8 +396,6 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
     func onMetaData(_ metaData: [AVMetadataItem]?) {
     
         if let metaDatas = metaData {
-            
-            startNowPlayingAnimation()
             
             let firstMeta: AVMetadataItem = metaDatas.first!
             let metaData = firstMeta.value as! String
