@@ -41,9 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        self.credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
                                                                 identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
 
-        let configuration = AWSServiceConfiguration(region:.EUWest1, credentialsProvider:credentialsProvider)
-        
-        AWSServiceManager.default().defaultServiceConfiguration = configuration
+//        let configuration = AWSServiceConfiguration(region:.EUWest1, credentialsProvider:credentialsProvider)
+//        
+//        AWSServiceManager.default().defaultServiceConfiguration = configuration
 
 
         //appsync offline database
