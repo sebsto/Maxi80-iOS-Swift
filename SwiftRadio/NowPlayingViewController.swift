@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import MediaPlayer
+import MediaPlayer // for volume control
 import MessageUI
 import AWSAppSync
 
@@ -21,97 +21,104 @@ class NowPlayingViewController: UIViewController {
     @IBOutlet weak var artistLabel: UILabel!
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playPauseButton: UIButton!
-//    @IBOutlet weak var mpVolumeViewParentView: UIView!
     @IBOutlet weak var slider: UISlider!
     
     // the hidden MPVolumeView's slider - we are going to link it to volumeSlider in viewDidLoad()
-    var mpVolumeSlider : UISlider!
-    let SYSTEM_VOLUME_NOTIFICATION = NSNotification.Name("AVSystemController_SystemVolumeDidChangeNotification")
-    
-    var radioPlayer = AVPlayer()
-    var track: Track! = Track()
-    var isPlaying : Bool = false
-    
-    var streamItem : CustomAVPlayerItem!
+    private var mpVolumeSlider : UISlider!
+    private let SYSTEM_VOLUME_NOTIFICATION = NSNotification.Name("AVSystemController_SystemVolumeDidChangeNotification")
+    private let LOG = Logger.createOSLog(module: "NowPlayingViewController")
+
+    // the media player
+    private let player = StreamingService()
     
     // counter for ArtWork load retry
-    var retry = 0;
+    private var retry = 0;
         
     //*****************************************************************
     // MARK: - GUI initialisation
     //*****************************************************************
+    
+    // make the status bar black
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent // .default
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let theApp = UIApplication.shared.delegate as! AppDelegate
+        let app = UIApplication.shared.delegate as! AppDelegate
 
         // add ourselves as observer to be notified when radio station is loaded
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(onDidReceiveRadioStationData),
+//                                               name: app.radioStationDataNotificationName,
+//                                               object: nil)
+        
+        // add ourselves as observer to be notified when stream meta data is changing
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(onDidReceiveRadioStationData),
-                                               name: theApp.radioStationDataNotificationName,
+                                               selector: #selector(onDidReceiveMetaData),
+                                               name: app.metaDataNotificationName,
                                                object: nil)
-        
-        // Notification for AVAudioSession Interruption (e.g. Phone call)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(sessionInterrupted),
-                                               name: AVAudioSession.interruptionNotification,
-                                               object: AVAudioSession.sharedInstance())
-        
+
         // Setup slider
         prepareVolumeSlider()
         
-//        let thumbImageNormal = UIImage(named: "slider-ball")
-//        mpVolumeSlider?.setThumbImage(thumbImageNormal, for: .normal)
-        
-        
-        // set initial image on cover
-//        self.updateAlbumImage(image: UIImage(named: "cover")!)
-
-        // default logic to handle radio station data
-        // onDidReceiveRadioStationData(Notification(name: theApp.radioStationDataNotificationName))
     }
     
     deinit {
-        // Be a good citizen
-        let theApp = UIApplication.shared.delegate as! AppDelegate
+        // Be a good citizen and de-register ourself from Notification Center
+        let app = UIApplication.shared.delegate as! AppDelegate
 
-        NotificationCenter.default.removeObserver(self,
-            name: theApp.radioStationDataNotificationName,
-            object: nil)
+//        NotificationCenter.default.removeObserver(self,
+//                                                  name: app.radioStationDataNotificationName,
+//                                                object: nil)
         
         NotificationCenter.default.removeObserver(self,
-            name: AVAudioSession.interruptionNotification,
-            object: AVAudioSession.sharedInstance())
-        
+                                                  name: app.metaDataNotificationName,
+                                                  object: nil)
+
         NotificationCenter.default.removeObserver(self,
             name: SYSTEM_VOLUME_NOTIFICATION,
             object: AVAudioSession.sharedInstance())
     }
     
-    @objc func onDidReceiveRadioStationData(_ notification:Notification) {
-
-        // do not use the notification object has it might be nil
+    @objc func onDidReceiveMetaData(_ notification:Notification) {
+        let app = UIApplication.shared.delegate as! AppDelegate
         
-        let theApp = UIApplication.shared.delegate as! AppDelegate
-        
-        // update UI on main thread
         DispatchQueue.main.async {
-
-            // update labels with station name
-            self.updateLabels(artist: theApp.station.stationName, track: theApp.station.stationDesc)
             
-            // Set View Title
-            self.title = theApp.station.stationName
-            
-            // Setup our stream
-            let streamURL = URL(string: theApp.station.stationStreamURL)
-            self.streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
-            self.pausePlayPressed()
+            // avoid refreshing at app start, when we receive radio station data
+            if (app.isPlaying) {
+                self.artistLabel.text = app.currentArtist
+                self.songLabel.text = app.currentTrack
+                self.loadAlbumArtwork()
+            } else {
+                // when we receive meta data and the app is not playing, it means we just receive the radio name
+                // let's play
+                // this is made possible because we change the isPlaying flag as soon as the player is buffering.
+                self.pausePlayPressed()
+            }
         }
     }
+
+//    @objc func onDidReceiveRadioStationData(_ notification:Notification) {
+//
+//        // do not use the notification object has it might be nil
+//
+//        let app = UIApplication.shared.delegate as! AppDelegate
+//
+//        // update UI on main thread
+//        DispatchQueue.main.async {
+//
+//            // update labels with station name
+//            self.updateLabels(artist: app.station.name, track: app.station.desc)
+//
+//            // Set View Title
+//            self.title = app.station.name
+//
+//            // play
+//            self.pausePlayPressed()
+//        }
+//    }
     
     //*****************************************************************
     // MARK: - Player Controls (Play/Pause/Volume)
@@ -119,30 +126,22 @@ class NowPlayingViewController: UIViewController {
     
     @IBAction func pausePlayPressed() {
 
-        if (isPlaying) {
-            radioPlayer.pause()
-            radioPlayer.replaceCurrentItem(with: nil)
-            isPlaying = false
+        let app = UIApplication.shared.delegate as! AppDelegate
 
-            // TODO : change button image
+        if (app.isPlaying) {
+            player.stop()
+
+            // change button image
             playPauseButton.setImage(UIImage(named: "btn-play")!, for: .normal)
             
-            self.updateAlbumImage(image: UIImage(named: "cover")!)
+            // force a refresh of the cover art and track & artist name
+            app.setTrack(artist: nil, track: nil)
             
-            let theApp = UIApplication.shared.delegate as! AppDelegate
-            updateLabels(artist: theApp.station.stationName, track:theApp.station.stationDesc)
         } else {
-            radioPlayer.replaceCurrentItem(with: self.streamItem)
-            radioPlayer.play()
-            isPlaying = true
+            player.start()
             
-            // TODO : change image
+            // change image
             playPauseButton.setImage(UIImage(named: "btn-pause")!, for: .normal)
-            
-            // animate with fade-in / fade-out
-            // TODO
-            
-            // update label and artwork will be done automatically when we will receive meta data
         }
     }
 
@@ -214,9 +213,7 @@ class NowPlayingViewController: UIViewController {
         
         // update GUI on main thread
         DispatchQueue.main.async {
-            
-            // Update track struct
-            self.track.artworkImage = image
+            // Update cover image struct
             self.coverImageView.image = image
             
             // Turn off network activity indicator
@@ -233,22 +230,17 @@ class NowPlayingViewController: UIViewController {
 
     // load the artwork from our backend API
     func loadAlbumArtwork() {
-        
-        if (self.track.artist == "") && (self.track.artist == "") {
-            print("no artist nor track name to fetch artwork")
-            return
-        }
 
         DispatchQueue.main.async {
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
         }
 
         // get our AppSync client
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let appSyncClient = appDelegate.appSyncClient
+        let app = UIApplication.shared.delegate as! AppDelegate
+        let appSyncClient = app.appSyncClient
         
-        print("Going to call backend artwork for \(self.track.artist) and \(self.track.title)")
-        appSyncClient?.fetch(query: ArtworkQuery(artist:self.track.artist, track:self.track.title),
+        os_log_debug(LOG, "Going to call backend artwork for \(app.currentArtist) and \(app.currentTrack)")
+        appSyncClient?.fetch(query: ArtworkQuery(artist:app.currentArtist, track:app.currentTrack),
                              cachePolicy: .fetchIgnoringCacheData)  {
                                 (result, error) in
                                 
@@ -256,22 +248,19 @@ class NowPlayingViewController: UIViewController {
                 
                 let e = error! as! AWSAppSyncClientError
                 let response = e.response
-                print(response!)
+                os_log_error(self.LOG, "Error call ArtWork API \(response!)")
                                 
             } else {
                 
                 self.retry = 0;
                 guard let artwork = result?.data?.artwork else {
-                    print("artwork is nil")
+                    os_log_error(self.LOG, "artwork is nil")
                     return
                 }
-                print(artwork)
+                os_log_debug(self.LOG, "Artwork is \(artwork)")
                 
-                // if the API returns non error, it always return an URL
-                self.track.artworkURL = artwork.url!
-
                 // load the image from the URL we received
-                if let url = URL(string: self.track.artworkURL) {
+                if let url = URL(string: artwork.url!) {
                     self.updateAlbumImage(url: url)
                 }
             }
@@ -283,10 +272,10 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
         
     @IBAction func shareButtonPressed(_ sender: UIButton) {
-        let theApp = UIApplication.shared.delegate as! AppDelegate
+        let app = UIApplication.shared.delegate as! AppDelegate
 
-        let songToShare = "I'm listening to \(track.title) on \(theApp.station.stationName) via Maxi80 for iOS"
-        let activityViewController = UIActivityViewController(activityItems: [songToShare, track.artworkImage!], applicationActivities: nil)
+        let songToShare = "I'm listening to \(app.currentTrack) by \(app.currentArtist) on \(app.station.name) via Maxi80 for iOS.  Check it out at https://www.maxi80.com"
+        let activityViewController = UIActivityViewController(activityItems: [songToShare, coverImageView.image!], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
     }
     
@@ -311,16 +300,17 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     func updateLockScreen() {
-        
+        let app = UIApplication.shared.delegate as! AppDelegate
+
         // Update notification/lock screen
-        let image = track.artworkImage!
+        let image = coverImageView.image!
         let albumArtwork = MPMediaItemArtwork.init(boundsSize: image.size, requestHandler: { (size) -> UIImage in
             return image
         })
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [
-            MPMediaItemPropertyArtist: track.artist,
-            MPMediaItemPropertyTitle: track.title,
+            MPMediaItemPropertyArtist: app.currentArtist,
+            MPMediaItemPropertyTitle: app.currentTrack,
             MPMediaItemPropertyArtwork: albumArtwork
         ]
     }
@@ -341,84 +331,6 @@ class NowPlayingViewController: UIViewController {
         }
     }
     
-    //*****************************************************************
-    // MARK: - AVAudio Sesssion Interrupted
-    //*****************************************************************
-    
-    // Example code on handling AVAudio interruptions (e.g. Phone calls)
-    @objc func sessionInterrupted(notification: NSNotification) {
-        if let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? NSNumber{
-            if let type = AVAudioSession.InterruptionType(rawValue: typeValue.uintValue){
-                if type == .began {
-                    print("interruption: began")
-                    // Add your code here
-                    
-                    // TODO isPlaying = false ?
-                } else{
-                    print("interruption: ended")
-                    // Add your code here
-                }
-            }
-        }
-    }
-}
-
-//*****************************************************************
-// MARK: - AVPlayerItem Delegate (for metadata)
-//*****************************************************************
-extension NowPlayingViewController: CustomAVPlayerItemDelegate {
-    
-    func onMetaData(_ metaData: [AVMetadataItem]?) {
-    
-        if let metaDatas = metaData {
-            
-            let firstMeta: AVMetadataItem = metaDatas.first!
-            let metaData = firstMeta.value as! String
-            var stringParts = [String]()
-            if metaData.range(of: " - ") != nil {
-                stringParts = metaData.components(separatedBy: " - ")
-            } else {
-                stringParts = metaData.components(separatedBy: "-")
-            }
-            
-            // Set artist & songvariables
-            track.artist = stringParts[0]
-            track.title = ""
-            
-            if stringParts.count > 1 {
-                track.title = stringParts[1]
-            }
-            
-            DispatchQueue.main.async {
-                    if kDebugLog {
-                        print("METADATA artist: \(self.track.artist) | title: \(self.track.title)")
-                    }
-                    // Update Labels
-                
-                    if self.track.artist == "" && self.track.title == "" {
-                        // when no meta data received, use station name instead
-                        let theApp = UIApplication.shared.delegate as! AppDelegate
-
-                        self.updateLabels(artist: theApp.station.stationName,
-                                          track: theApp.station.stationDesc)
-                    } else {
-                        self.updateLabels(artist: self.track.artist,
-                                          track: self.track.title)
-                    }
-                
-                    // songLabel animation
-                    // TODO
-                    
-                    // Update Stations Screen
-                    //self.delegate?.songMetaDataDidUpdate(track: self.track)
-                    
-                    // Query API for album art
-                    self.retry = 0;
-                    self.loadAlbumArtwork()
-                
-            }
-        }
-    }
 }
 
 //*****************************************************************
@@ -451,9 +363,9 @@ extension NowPlayingViewController: MFMailComposeViewControllerDelegate {
         //let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
         //sendMailErrorAlert.show()
         
-        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device can not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: .`default`, handler: { _ in
-            NSLog("The \"OK\" alert occured.")
+            os_log_debug(self.LOG, "The \"OK\" alert occured.")
         }))
     }
 }

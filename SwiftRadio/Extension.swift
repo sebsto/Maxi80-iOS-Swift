@@ -3,10 +3,11 @@
 //  SwiftRadio
 //
 //  Created by Stormacq, Sebastien on 3/11/17.
-//  Copyright © 2017 matthewfecher.com. All rights reserved.
+//  Copyright © 2017 stormacq.com. All rights reserved.
 //
 
 import Foundation
+import os.log
 
 extension Bundle {
     
@@ -25,5 +26,4 @@ extension Bundle {
     var buildNumber: String? {
         return infoDictionary?["CFBundleVersion"] as? String
     }
-    
 }

@@ -15,23 +15,42 @@ import AWSAppSync
 import AWSCore
 import AWSCognito
 
+protocol MetaDataDelegate {
+    func onCurrentTrackChanged(artist: String, track: String)
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
+    public private(set) var station : StationQuery.Data.Station
+    public private(set) var currentArtist : String
+    public private(set) var currentTrack : String
+    public var isPlaying = false
+
+//    public let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
+    public let metaDataNotificationName = Notification.Name("didReceiveIcyMetaData")
+    public var appSyncClient: AWSAppSyncClient?
     
-    //default value for radio Station
-    var station = RadioStation(
-        name: "Maxi80",
-        streamURL: "https://audio1.maxi80.com",
-        imageURL: "cover.png",
-        desc: "La radio de toute une génération",
-        longDesc: "Le meilleur de la musique des années 80"
-    )
+    private let LOG = Logger.createOSLog(module: "App")
+    public var window: UIWindow?
+
+    // set default values
+    override init() {
+        self.station =  StationQuery.Data.Station(
+            name: "Maxi80",
+            streamUrl: "https://audio1.maxi80.com",
+            imageUrl: "cover.png",
+            desc: "La radio de toute une génération",
+            longDesc: "Le meilleur de la musique des années 80"
+        )
+        self.currentArtist = self.station.name
+        self.currentTrack = self.station.desc
+        super.init()
+    }
     
-    var appSyncClient: AWSAppSyncClient?
-    
-    let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
+    //*****************************************************************
+    // MARK: - App lifecycle
+    //*****************************************************************
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -86,6 +105,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
 
+    //*****************************************************************
+    // MARK: - App initialization
+    //*****************************************************************
+
     func setupAppSync() {
         
         // Initialize the Amazon Cognito credentials provider
@@ -103,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                   databaseURL: databaseURL)
             self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
         } catch {
-            print("Error initializing appsync client. \(error)")
+            os_log_error(LOG, "Error initializing appsync client. \(String(describing: error))")
         }
     }
     
@@ -115,7 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             try audioSession.setCategory(AVAudioSession.Category.playback, mode:AVAudioSession.Mode.default)
             try audioSession.setActive(true)
         } catch let error as NSError {
-            print("Failed to set audio session category.  Error: \(String(describing: error))")
+            os_log_error(LOG, "Failed to set audio session category.  Error: \(String(describing: error))")
         }
     }
     
@@ -124,33 +147,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //*****************************************************************
     
     func queryRadioData() {
-        if kDebugLog { print("Calling backend to get station details") }
+        os_log_debug(LOG, "Calling backend to get station details")
         self.appSyncClient?.fetch(query: StationQuery(),
                                   cachePolicy: .fetchIgnoringCacheData) {
                                     (result, error) in
                                     
             if error != nil {
-                print("Error when calling Radio Station Data API")
-                print(error?.localizedDescription ?? "")
+                os_log_error(self.LOG, "Error when calling Radio Station Data API : \(error!.localizedDescription)")
             } else {
-                guard let station = result?.data?.station else {
-                    print("Received nil data for station, using default value")
-                    return
+                
+                if let station = result?.data?.station  {
+                    
+                    os_log_debug(self.LOG, "Radio Station data received : \(station)")
+                    self.station = StationQuery.Data.Station(
+                        name: station.name,
+                        streamUrl: station.streamUrl,
+                        imageUrl: station.imageUrl,
+                        desc: station.desc,
+                        longDesc: station.longDesc
+                    )
+                } else {
+                    os_log_error(self.LOG, "Received nil data for station, using default value")
                 }
-                
-                if kDebugLog { print("Radio Station data received : \(station)") }
-                self.station = RadioStation(
-                    name: station.name,
-                    streamURL: station.streamUrl,
-                    imageURL: station.imageUrl,
-                    desc: station.desc,
-                    longDesc: station.longDesc
-                )
-                
-                // notify listeners data are available (only NowPlayingViewController at this stage)
-                NotificationCenter.default.post(name: self.radioStationDataNotificationName,
-                                                object: self.station)
+            
+                self.setTrack(artist: self.station.name, track: self.station.desc)
             }
+        }
+    }
+    
+    //*****************************************************************
+    // MARK: - Receive Meta Data
+    //*****************************************************************
+    func setTrack(artist: String?, track: String?) {
+        let _artist = artist ?? self.station.name
+        let _track = track ?? self.station.desc
+        
+        self.currentArtist = _artist
+        self.currentTrack = _track
+        
+        // notify listeners data are available (only NowPlayingViewController at this stage)
+        NotificationCenter.default.post(name: self.metaDataNotificationName,
+                                        object: ["artist": self.currentArtist, "track": self.currentTrack])
+    }
+    
+    // callback to receive metadata
+    func handleiCyMetaData(metadata : String) {
+        var data = metadata.split(separator: "-")
+        os_log_debug(LOG, "Meta Data : \(data)")
+        if (data.count < 2) {
+            setTrack(artist: nil, track: metadata)
+        } else {
+            setTrack(artist: data[0].trimmingCharacters(in: .whitespacesAndNewlines), track: data[1].trimmingCharacters(in: .whitespacesAndNewlines))
         }
     }
 }

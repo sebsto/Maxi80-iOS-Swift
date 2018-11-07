@@ -10,7 +10,8 @@
 		004A88D82190FBA400DB86CD /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B90086461BBE40AF00E5372C /* MediaPlayer.framework */; };
 		006499BB21762BCE007ABC1D /* Maxi80BackendAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */; };
 		006499BD21762C87007ABC1D /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 006499BC21762C87007ABC1D /* awsconfiguration.json */; };
-		0081BD4E1E76CCF500CBA522 /* CustomAVPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0081BD4D1E76CCF500CBA522 /* CustomAVPlayerItem.swift */; };
+		008DAAEB21936BD000B851FE /* StreamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008DAAEA21936BD000B851FE /* StreamingService.swift */; };
+		008DAAED2193796200B851FE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008DAAEC2193796200B851FE /* Logger.swift */; };
 		00CDB7452190A6B000E6AB8B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */; };
 		00EB8A3921529A2100B111F0 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 00EB8A3821529A2100B111F0 /* Podfile */; };
 		00F5AFE41E74270200DB8B4A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F5AFE31E74270200DB8B4A /* Extension.swift */; };
@@ -22,8 +23,6 @@
 		9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9409E1251ABF6FEA00312E2B /* Images.xcassets */; };
 		9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */; };
 		94452E4F1AD6F24700BFE7A5 /* PopUpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94452E4E1AD6F24700BFE7A5 /* PopUpMenuViewController.swift */; };
-		94AC70AE1AD05C6200652982 /* RadioStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AC70AD1AD05C6200652982 /* RadioStation.swift */; };
-		94D260911B45D20000DE671C /* Maxi80-Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D260901B45D20000DE671C /* Maxi80-Settings.swift */; };
 		94D260981B45E8B800DE671C /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D260971B45E8B800DE671C /* Track.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,8 @@
 /* Begin PBXFileReference section */
 		006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Maxi80BackendAPI.swift; sourceTree = "<group>"; };
 		006499BC21762C87007ABC1D /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = awsconfiguration.json; sourceTree = SOURCE_ROOT; };
-		0081BD4D1E76CCF500CBA522 /* CustomAVPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAVPlayerItem.swift; sourceTree = "<group>"; };
+		008DAAEA21936BD000B851FE /* StreamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingService.swift; sourceTree = "<group>"; };
+		008DAAEC2193796200B851FE /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		00EB8A3821529A2100B111F0 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		00F5AFE31E74270200DB8B4A /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
@@ -56,8 +56,6 @@
 		9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlayingViewController.swift; sourceTree = "<group>"; };
 		942C52F45EB596B635008D2D /* Pods-Maxi80UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Maxi80UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Maxi80UITests/Pods-Maxi80UITests.release.xcconfig"; sourceTree = "<group>"; };
 		94452E4E1AD6F24700BFE7A5 /* PopUpMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpMenuViewController.swift; sourceTree = "<group>"; };
-		94AC70AD1AD05C6200652982 /* RadioStation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioStation.swift; sourceTree = "<group>"; };
-		94D260901B45D20000DE671C /* Maxi80-Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Maxi80-Settings.swift"; sourceTree = "<group>"; };
 		94D260971B45E8B800DE671C /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
 		B61BA13504D628B1E2E0D40A /* Pods_Maxi80UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Maxi80UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90086461BBE40AF00E5372C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
@@ -142,9 +140,10 @@
 			isa = PBXGroup;
 			children = (
 				9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */,
+				008DAAEA21936BD000B851FE /* StreamingService.swift */,
 				94D2608E1B45D0F800DE671C /* ViewControllers */,
 				94E976191B1A8BFB00F52B1E /* Model */,
-				94AC70AF1AD05C7400652982 /* Networking */,
+				94AC70AF1AD05C7400652982 /* API */,
 				9409E1221ABF6FEA00312E2B /* Main.storyboard */,
 				00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */,
 				9409E1251ABF6FEA00312E2B /* Images.xcassets */,
@@ -157,10 +156,9 @@
 		9409E1191ABF6FEA00312E2B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				0081BD4D1E76CCF500CBA522 /* CustomAVPlayerItem.swift */,
 				00F5AFE31E74270200DB8B4A /* Extension.swift */,
+				008DAAEC2193796200B851FE /* Logger.swift */,
 				9409E11A1ABF6FEA00312E2B /* Info.plist */,
-				94D260901B45D20000DE671C /* Maxi80-Settings.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -174,13 +172,13 @@
 			path = RadioPro;
 			sourceTree = "<group>";
 		};
-		94AC70AF1AD05C7400652982 /* Networking */ = {
+		94AC70AF1AD05C7400652982 /* API */ = {
 			isa = PBXGroup;
 			children = (
 				006499BC21762C87007ABC1D /* awsconfiguration.json */,
 				006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */,
 			);
-			name = Networking;
+			name = API;
 			sourceTree = "<group>";
 		};
 		94D2608E1B45D0F800DE671C /* ViewControllers */ = {
@@ -195,7 +193,6 @@
 		94E976191B1A8BFB00F52B1E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				94AC70AD1AD05C6200652982 /* RadioStation.swift */,
 				94D260971B45E8B800DE671C /* Track.swift */,
 			);
 			name = Model;
@@ -401,15 +398,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				008DAAEB21936BD000B851FE /* StreamingService.swift in Sources */,
 				006499BB21762BCE007ABC1D /* Maxi80BackendAPI.swift in Sources */,
-				94D260911B45D20000DE671C /* Maxi80-Settings.swift in Sources */,
 				9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */,
 				00F5AFE41E74270200DB8B4A /* Extension.swift in Sources */,
+				008DAAED2193796200B851FE /* Logger.swift in Sources */,
 				94D260981B45E8B800DE671C /* Track.swift in Sources */,
-				0081BD4E1E76CCF500CBA522 /* CustomAVPlayerItem.swift in Sources */,
 				94452E4F1AD6F24700BFE7A5 /* PopUpMenuViewController.swift in Sources */,
 				9409E11C1ABF6FEA00312E2B /* AppDelegate.swift in Sources */,
-				94AC70AE1AD05C6200652982 /* RadioStation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
