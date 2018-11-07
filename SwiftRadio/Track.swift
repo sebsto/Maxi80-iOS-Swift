@@ -16,5 +16,5 @@ struct Track {
 	var title: String = ""
 	var artist: String = ""
 	var artworkURL: String = ""
-	var artworkImage = UIImage(named: "station-maxi80")
+	var artworkImage = UIImage(named: "cover")
 }

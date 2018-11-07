@@ -1,5 +1,5 @@
 PODS:
-  - AWSAppSync (2.6.22):
+  - AWSAppSync (2.6.23):
     - AWSCore (~> 2.6.6)
     - ReachabilitySwift (~> 4.0.0)
     - SQLite.swift (= 0.11.4)
@@ -7,16 +7,14 @@ PODS:
     - AWSCore (= 2.6.33)
   - AWSCore (2.6.33)
   - ReachabilitySwift (4.0.0)
-  - Spring (1.0.6)
   - SQLite.swift (0.11.4):
     - SQLite.swift/standard (= 0.11.4)
   - SQLite.swift/standard (0.11.4)
 
 DEPENDENCIES:
-  - AWSAppSync (~> 2.6.21)
-  - AWSCognito (~> 2.6.29)
-  - AWSCore (~> 2.6.29)
-  - Spring (from `https://github.com/MengTo/Spring.git`)
+  - AWSAppSync (~> 2.6.23)
+  - AWSCognito (~> 2.6.33)
+  - AWSCore (~> 2.6.33)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -26,23 +24,13 @@ SPEC REPOS:
     - ReachabilitySwift
     - SQLite.swift
 
-EXTERNAL SOURCES:
-  Spring:
-    :git: https://github.com/MengTo/Spring.git
-
-CHECKOUT OPTIONS:
-  Spring:
-    :commit: fafd0b2e8d4d46405bd86fa7ba84bb7f73a20b13
-    :git: https://github.com/MengTo/Spring.git
-
 SPEC CHECKSUMS:
-  AWSAppSync: 5694ffc209ce6726b58a9cfd3bc49086d7120bd1
+  AWSAppSync: 6ff14e36d3476f861996aac7a45f51cf1bdf7371
   AWSCognito: 0d7106509da503589ea14ee468fa85cb7fab65ad
   AWSCore: ed83f7e36fb6c0211b04a439d8e564aa23bfe37d
   ReachabilitySwift: e67b2cab4d5386053673d8a7421b5981e5f08259
-  Spring: 3d113f14575ef79aec9c5f906dfa4f5001c03254
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
 
-PODFILE CHECKSUM: 40ed8feb8d803c65ae4afcaa2575a49bae8cfbbb
+PODFILE CHECKSUM: d48488ddeb86ac4daef8a483aa6be01e08a6b634
 
 COCOAPODS: 1.5.3

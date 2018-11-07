@@ -11,7 +11,7 @@ import MediaPlayer
 
 import AWSAppSync
 
-//https://aws.amazon.com/blogs/mobile/using-amazon-cognito-with-swift-sample-app-developer-guide-and-more/
+// https://aws.amazon.com/blogs/mobile/using-amazon-cognito-with-swift-sample-app-developer-guide-and-more/
 import AWSCore
 import AWSCognito
 
@@ -19,10 +19,17 @@ import AWSCognito
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var station: RadioStation!
-    var cognitoID : String?
+    
+    //default value for radio Station
+    var station = RadioStation(
+        name: "Maxi80",
+        streamURL: "https://audio1.maxi80.com",
+        imageURL: "cover.png",
+        desc: "La radio de toute une génération",
+        longDesc: "Le meilleur de la musique des années 80"
+    )
+    
     var appSyncClient: AWSAppSyncClient?
-    var credentialsProvider : AWSCognitoCredentialsProvider?
     
     let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
 
@@ -31,79 +38,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // MPNowPlayingInfoCenter
         UIApplication.shared.beginReceivingRemoteControlEvents()
         
-        // Make status bar white
+        // Make status the navigation bar is black
         UINavigationBar.appearance().barStyle = .black
 
         // Set AVFoundation category, required for background audio
         setupAudioService()
         
-        // Initialize the Amazon Cognito credentials provider
-       self.credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
-                                                                identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
-
-//        let configuration = AWSServiceConfiguration(region:.EUWest1, credentialsProvider:credentialsProvider)
-//        
-//        AWSServiceManager.default().defaultServiceConfiguration = configuration
-
-
-        //appsync offline database
-        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
-        
-        //initialize app sync
-        do {
-            //AppSync configuration & client initialization
-            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
-                                                                  credentialsProvider : self.credentialsProvider,
-                                                                  databaseURL: databaseURL)
-            self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
-        } catch {
-            print("Error initializing appsync client. \(error)")
-        }
+        // setup appsync
+        setupAppSync()
         
         //fetch radio station data from an API call on api.maxi80.net
-        if kDebugLog { print("Calling backend to get station details") }
-        self.appSyncClient?.fetch(query: StationQuery(),
-                                  cachePolicy: .fetchIgnoringCacheData) {
-            (result, error) in
-                                    
-            if error != nil {
-                print("Error when calling Radio Station Data API")
-                print(error?.localizedDescription ?? "")
-            } else {
-                guard let station = result?.data?.station else {
-                    print("Received nil data for station, using default value")
-                    
-                    //initialize radio station data with the default
-                    self.station = RadioStation(
-                        name: "Maxi80",
-                        streamURL: "https://audio1.maxi80.com",
-                        imageURL: "station-maxi80.png",
-                        desc: "La radio de toute une génération",
-                        longDesc: "Le meilleur de la musique des années 80"
-                    )
-                    
-                    // notify listeners data are available (only NowPlayingViewController at this stage)
-                    NotificationCenter.default.post(name: self.radioStationDataNotificationName,
-                                                    object: self.station)
-                    return
-                }
-                
-                if kDebugLog { print("Radio Station data received : \(station)") }
-                self.station = RadioStation(
-                    name: station.name,
-                    streamURL: station.streamUrl,
-                    imageURL: station.imageUrl,
-                    desc: station.desc,
-                    longDesc: station.longDesc
-                )
-                
-                // notify listeners data are available (only NowPlayingViewController at this stage)
-                NotificationCenter.default.post(name: self.radioStationDataNotificationName,
-                                                object: self.station)
-            }
-        }
+        queryRadioData()
 
         return true
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -138,35 +86,71 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
 
-    //*****************************************************************
-    // MARK: - Application Initialization Code
-    //*****************************************************************
-
-    func setupAudioService() {
+    func setupAppSync() {
         
-        // Set AVFoundation category, required for background audio
-        var error: NSError?
-        var success: Bool
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(AVAudioSession.Category.playback, mode:AVAudioSession.Mode.default)
-            success = true
-        } catch let error1 as NSError {
-            error = error1
-            success = false
-        }
-        if !success {
-            print("Failed to set audio session category.  Error: \(String(describing: error))")
-        }
+        // Initialize the Amazon Cognito credentials provider
+        let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
+                                                                 identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
         
-        // Set audioSession as active
+        //appsync offline database
+        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
+        
+        //initialize app sync
         do {
-            try audioSession.setActive(true)
-        } catch let error2 as NSError {
-            print("audioSession setActive error \(error2)")
+            //AppSync configuration & client initialization
+            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
+                                                                  credentialsProvider : credentialsProvider,
+                                                                  databaseURL: databaseURL)
+            self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
+        } catch {
+            print("Error initializing appsync client. \(error)")
         }
     }
     
-
-   
+    func setupAudioService() {
+        
+        // Set AVFoundation category, required for background audio
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(AVAudioSession.Category.playback, mode:AVAudioSession.Mode.default)
+            try audioSession.setActive(true)
+        } catch let error as NSError {
+            print("Failed to set audio session category.  Error: \(String(describing: error))")
+        }
+    }
+    
+    //*****************************************************************
+    // MARK: - Radio Management
+    //*****************************************************************
+    
+    func queryRadioData() {
+        if kDebugLog { print("Calling backend to get station details") }
+        self.appSyncClient?.fetch(query: StationQuery(),
+                                  cachePolicy: .fetchIgnoringCacheData) {
+                                    (result, error) in
+                                    
+            if error != nil {
+                print("Error when calling Radio Station Data API")
+                print(error?.localizedDescription ?? "")
+            } else {
+                guard let station = result?.data?.station else {
+                    print("Received nil data for station, using default value")
+                    return
+                }
+                
+                if kDebugLog { print("Radio Station data received : \(station)") }
+                self.station = RadioStation(
+                    name: station.name,
+                    streamURL: station.streamUrl,
+                    imageURL: station.imageUrl,
+                    desc: station.desc,
+                    longDesc: station.longDesc
+                )
+                
+                // notify listeners data are available (only NowPlayingViewController at this stage)
+                NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                object: self.station)
+            }
+        }
+    }
 }

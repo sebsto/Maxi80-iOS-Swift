@@ -9,7 +9,6 @@
 import UIKit
 import MediaPlayer
 import MessageUI
-import Spring
 import AWSAppSync
 
 //*****************************************************************
@@ -18,19 +17,20 @@ import AWSAppSync
 
 class NowPlayingViewController: UIViewController {
 
-    @IBOutlet weak var albumHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var albumImageView: SpringImageView!
+    @IBOutlet weak var coverImageView: UIImageView!
     @IBOutlet weak var artistLabel: UILabel!
-    @IBOutlet weak var songLabel: SpringLabel!
-    @IBOutlet weak var pauseButton: UIButton!
-    @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var volumeParentView: UIView!
-    @IBOutlet      var slider: UISlider! = UISlider()
+    @IBOutlet weak var songLabel: UILabel!
+    @IBOutlet weak var playPauseButton: UIButton!
+//    @IBOutlet weak var mpVolumeViewParentView: UIView!
+    @IBOutlet weak var slider: UISlider!
     
-    var currentStation: RadioStation!
+    // the hidden MPVolumeView's slider - we are going to link it to volumeSlider in viewDidLoad()
+    var mpVolumeSlider : UISlider!
+    let SYSTEM_VOLUME_NOTIFICATION = NSNotification.Name("AVSystemController_SystemVolumeDidChangeNotification")
+    
     var radioPlayer = AVPlayer()
     var track: Track! = Track()
-    var mpVolumeSlider = UISlider()
+    var isPlaying : Bool = false
     
     var streamItem : CustomAVPlayerItem!
     
@@ -38,8 +38,11 @@ class NowPlayingViewController: UIViewController {
     var retry = 0;
         
     //*****************************************************************
-    // MARK: - ViewDidLoad
+    // MARK: - GUI initialisation
     //*****************************************************************
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent // .default
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,32 +50,28 @@ class NowPlayingViewController: UIViewController {
 
         // add ourselves as observer to be notified when radio station is loaded
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(onDidReceiveRadioStationData(_:)),
+                                               selector: #selector(onDidReceiveRadioStationData),
                                                name: theApp.radioStationDataNotificationName,
                                                object: nil)
         
         // Notification for AVAudioSession Interruption (e.g. Phone call)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(NowPlayingViewController.sessionInterrupted),
+                                               selector: #selector(sessionInterrupted),
                                                name: AVAudioSession.interruptionNotification,
                                                object: AVAudioSession.sharedInstance())
         
         // Setup slider
-        setupVolumeSlider()
-
-        // Set AlbumArtwork Constraints
-        optimizeForDeviceSize()
-        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
-
-        currentStation =  theApp.station //query radio station details from App Delegatelet
-        guard currentStation != nil else {
-            // current station is not initialized yet.
-            if kDebugLog { print("Current Station is not initialized yet") }
-            return
-        }
+        prepareVolumeSlider()
         
+//        let thumbImageNormal = UIImage(named: "slider-ball")
+//        mpVolumeSlider?.setThumbImage(thumbImageNormal, for: .normal)
+        
+        
+        // set initial image on cover
+//        self.updateAlbumImage(image: UIImage(named: "cover")!)
+
         // default logic to handle radio station data
-        onDidReceiveRadioStationData(Notification(name: theApp.radioStationDataNotificationName))
+        // onDidReceiveRadioStationData(Notification(name: theApp.radioStationDataNotificationName))
     }
     
     deinit {
@@ -82,8 +81,13 @@ class NowPlayingViewController: UIViewController {
         NotificationCenter.default.removeObserver(self,
             name: theApp.radioStationDataNotificationName,
             object: nil)
+        
         NotificationCenter.default.removeObserver(self,
             name: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance())
+        
+        NotificationCenter.default.removeObserver(self,
+            name: SYSTEM_VOLUME_NOTIFICATION,
             object: AVAudioSession.sharedInstance())
     }
     
@@ -92,113 +96,94 @@ class NowPlayingViewController: UIViewController {
         // do not use the notification object has it might be nil
         
         let theApp = UIApplication.shared.delegate as! AppDelegate
-        currentStation = theApp.station;
         
         // update UI on main thread
         DispatchQueue.main.async {
 
             // update labels with station name
-            self.updateLabels(artist: self.currentStation.stationName, track: self.currentStation.stationDesc)
+            self.updateLabels(artist: theApp.station.stationName, track: theApp.station.stationDesc)
             
             // Set View Title
-            self.title = self.currentStation.stationName
+            self.title = theApp.station.stationName
             
             // Setup our stream
-            let streamURL = URL(string: self.currentStation.stationStreamURL)
+            let streamURL = URL(string: theApp.station.stationStreamURL)
             self.streamItem = CustomAVPlayerItem(url: streamURL!, delegate: self)
-            self.playPressed()
+            self.pausePlayPressed()
         }
-    }
-    
-    //*****************************************************************
-    // MARK: - Setup
-    //*****************************************************************
-
-  
-    func setupVolumeSlider() {
-        // Note: This slider implementation uses a MPVolumeView
-        // The volume slider only works in devices, not the simulator.
-        volumeParentView.backgroundColor = UIColor.clear
-        let volumeView = MPVolumeView(frame: volumeParentView.bounds)
-        for view in volumeView.subviews {
-            let uiview: UIView = view as UIView
-            if (uiview.description as NSString).range(of: "MPVolumeSlider").location != NSNotFound {
-                mpVolumeSlider = (uiview as! UISlider)
-            }
-        }
-        
-        let thumbImageNormal = UIImage(named: "slider-ball")
-        slider?.setThumbImage(thumbImageNormal, for: .normal)
-        
     }
     
     //*****************************************************************
     // MARK: - Player Controls (Play/Pause/Volume)
     //*****************************************************************
     
-    @IBAction func playPressed() {
-        radioPlayer.replaceCurrentItem(with: self.streamItem)
-        radioPlayer.play()
+    @IBAction func pausePlayPressed() {
 
-        playButtonEnable(enabled: false)
+        if (isPlaying) {
+            radioPlayer.pause()
+            radioPlayer.replaceCurrentItem(with: nil)
+            isPlaying = false
 
-        // songLabel Animation
-        songLabel.animation = "fadein"
-        songLabel.animate()
-
-        // update label and artwork will be done automatically when we will receive meta data
-        
-    }
-    
-    @IBAction func pausePressed() {
-        radioPlayer.pause()
-        radioPlayer.replaceCurrentItem(with: nil)
-
-        playButtonEnable()
-        
-        self.updateAlbumImage(image: UIImage(named: "station-maxi80")!)
-        
-        updateLabels(artist: currentStation.stationName, track:currentStation.stationDesc)
-    }
-    
-    @IBAction func volumeChanged(_ sender:UISlider) {
-        mpVolumeSlider.value = sender.value
-    }
-    
-    //*****************************************************************
-    // MARK: - UI Helper Methods
-    //*****************************************************************
-    
-    func optimizeForDeviceSize() {
-        
-        // Adjust album size to fit iPhone 4s, 6s & 6s+
-        let deviceHeight = self.view.bounds.height
-        
-        if deviceHeight == 480 {
-            albumHeightConstraint.constant = 106
-            view.updateConstraints()
-        } else if deviceHeight == 667 {
-            albumHeightConstraint.constant = 230
-            view.updateConstraints()
-        } else if deviceHeight > 667 {
-            albumHeightConstraint.constant = 260
-            view.updateConstraints()
+            // TODO : change button image
+            playPauseButton.setImage(UIImage(named: "btn-play")!, for: .normal)
+            
+            self.updateAlbumImage(image: UIImage(named: "cover")!)
+            
+            let theApp = UIApplication.shared.delegate as! AppDelegate
+            updateLabels(artist: theApp.station.stationName, track:theApp.station.stationDesc)
+        } else {
+            radioPlayer.replaceCurrentItem(with: self.streamItem)
+            radioPlayer.play()
+            isPlaying = true
+            
+            // TODO : change image
+            playPauseButton.setImage(UIImage(named: "btn-pause")!, for: .normal)
+            
+            // animate with fade-in / fade-out
+            // TODO
+            
+            // update label and artwork will be done automatically when we will receive meta data
         }
+    }
+
+    //*****************************************************************
+    // MARK: - Volume Slider management
+    //*****************************************************************
+    
+
+    func prepareVolumeSlider() {
+        // The volume slider only works in devices, not the simulator.
+        // http://blog.wizages.com/Swift-Volume-Controls/
+        // Note: This slider implementation uses a hidden MPVolumeView
+        
+        let volumeView = MPVolumeView(frame: slider.superview!.bounds)
+        for view in volumeView.subviews {
+            if let slider = view as? UISlider {
+                mpVolumeSlider = slider
+            }
+        }
+        
+        // be notified of system volume changes to give us a possibility to adjust our slider
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(systemVolumeDidChange),
+                                               name: SYSTEM_VOLUME_NOTIFICATION ,
+                                               object: nil)
+    }
+
+    @IBAction func volumeSliderChanged(_ sender:UISlider) {
+        if let vs = self.mpVolumeSlider {
+            vs.value = sender.value
+        }
+    }
+    
+    @objc func systemVolumeDidChange(notification: NSNotification) {
+        let volume = notification.userInfo!["AVSystemController_AudioVolumeNotificationParameter"] as! Float
+        slider.value = volume
     }
     
     func updateLabels(artist: String, track: String) {
-        songLabel.text = artist
-        artistLabel.text = track
-    }
-    
-    func playButtonEnable(enabled: Bool = true) {
-        if enabled {
-            playButton.isEnabled = true
-            pauseButton.isEnabled = false
-        } else {
-            playButton.isEnabled = false
-            pauseButton.isEnabled = true
-        }
+        songLabel.text = track
+        artistLabel.text = artist
     }
     
     //*****************************************************************
@@ -232,15 +217,13 @@ class NowPlayingViewController: UIViewController {
             
             // Update track struct
             self.track.artworkImage = image
-            self.albumImageView.image = image
+            self.coverImageView.image = image
             
             // Turn off network activity indicator
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
             // Animate artwork
-            self.albumImageView.animation = "wobble"
-            self.albumImageView.duration = 2
-            self.albumImageView.animate()
+            // TODO
             
             // Update lockscreen
             self.updateLockScreen()
@@ -300,7 +283,9 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
         
     @IBAction func shareButtonPressed(_ sender: UIButton) {
-        let songToShare = "I'm listening to \(track.title) on \(currentStation.stationName) via Maxi80 for iOS"
+        let theApp = UIApplication.shared.delegate as! AppDelegate
+
+        let songToShare = "I'm listening to \(track.title) on \(theApp.station.stationName) via Maxi80 for iOS"
         let activityViewController = UIActivityViewController(activityItems: [songToShare, track.artworkImage!], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
     }
@@ -347,9 +332,9 @@ class NowPlayingViewController: UIViewController {
             
             switch receivedEvent!.subtype {
             case .remoteControlPlay:
-                playPressed()
+                pausePlayPressed()
             case .remoteControlPause:
-                pausePressed()
+                pausePlayPressed()
             default:
                 break
             }
@@ -367,6 +352,8 @@ class NowPlayingViewController: UIViewController {
                 if type == .began {
                     print("interruption: began")
                     // Add your code here
+                    
+                    // TODO isPlaying = false ?
                 } else{
                     print("interruption: ended")
                     // Add your code here
@@ -374,18 +361,6 @@ class NowPlayingViewController: UIViewController {
             }
         }
     }
-    
-    
-    //*****************************************************************
-    // MARK: - Detect end of mp3 in case you're using a file instead of a stream
-    //*****************************************************************
-    
-    @objc func playerItemDidReachEnd(){
-        if kDebugLog {
-            print("playerItemDidReachEnd")
-        }
-    }
-    
 }
 
 //*****************************************************************
@@ -422,18 +397,17 @@ extension NowPlayingViewController: CustomAVPlayerItemDelegate {
                 
                     if self.track.artist == "" && self.track.title == "" {
                         // when no meta data received, use station name instead
-                        self.updateLabels(artist: self.currentStation.stationName,
-                                          track: self.currentStation.stationDesc)
+                        let theApp = UIApplication.shared.delegate as! AppDelegate
+
+                        self.updateLabels(artist: theApp.station.stationName,
+                                          track: theApp.station.stationDesc)
                     } else {
                         self.updateLabels(artist: self.track.artist,
                                           track: self.track.title)
                     }
                 
                     // songLabel animation
-                    self.songLabel.animation = "zoomIn"
-                    self.songLabel.duration = 1.5
-                    self.songLabel.damping = 1
-                    self.songLabel.animate()
+                    // TODO
                     
                     // Update Stations Screen
                     //self.delegate?.songMetaDataDidUpdate(track: self.track)
