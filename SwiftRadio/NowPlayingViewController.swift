@@ -33,6 +33,9 @@ class NowPlayingViewController: UIViewController {
     
     // counter for ArtWork load retry
     private var retry = 0;
+    
+    // fade in / out animation time
+    private let ANIMATION_TIME = 0.2
         
     //*****************************************************************
     // MARK: - GUI initialisation
@@ -185,16 +188,34 @@ class NowPlayingViewController: UIViewController {
         slider.value = volume
     }
     
+    //*****************************************************************
+    // MARK: - Label management
+    //*****************************************************************
+    
+
     func updateLabels(artist: String, track: String) {
         
-        self.songLabel.alpha = 0.0
-        self.artistLabel.alpha = 0.0
-        songLabel.text = track
-        artistLabel.text = artist
-        UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: {
-            self.songLabel.alpha = 1.0
-            self.artistLabel.alpha = 1.0
-        }).startAnimation()
+        // fade out
+        let animator = UIViewPropertyAnimator(duration: self.ANIMATION_TIME, curve: .easeOut, animations: {
+            self.songLabel.alpha = 0.0
+            self.artistLabel.alpha = 0.0
+        })
+            
+        animator.addCompletion { _ in
+                
+                // change text
+                self.songLabel.text = track
+                self.artistLabel.text = artist
+                
+                // fade in again
+                UIViewPropertyAnimator(duration: self.ANIMATION_TIME, curve: .easeOut, animations: {
+                    self.songLabel.alpha = 1.0
+                    self.artistLabel.alpha = 1.0
+                }).startAnimation()
+
+            }
+        
+        animator.startAnimation()
 
     }
     
@@ -231,11 +252,24 @@ class NowPlayingViewController: UIViewController {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
 
             // Update cover image struct with animation
-            self.coverImageView.alpha = 0.0
-            self.coverImageView.image = image
-            UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: {
-                self.coverImageView.alpha = 1.0
-            }).startAnimation()
+            
+            // fade out
+            let animator = UIViewPropertyAnimator(duration: self.ANIMATION_TIME, curve: .easeOut, animations: {
+                self.coverImageView.alpha = 0.0
+            })
+            
+            animator.addCompletion { _ in
+                // change image
+                self.coverImageView.image = image
+                
+                // fade in again
+                UIViewPropertyAnimator(duration: self.ANIMATION_TIME, curve: .easeOut, animations: {
+                    self.coverImageView.alpha = 1.0
+                }).startAnimation()
+            }
+            
+            animator.startAnimation()
+
             
             // Update lockscreen
             self.updateLockScreen()
