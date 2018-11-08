@@ -46,6 +46,8 @@ class StreamingService : NSObject {
         
         radioPlayer = AVPlayer(playerItem: playerItem)
         radioPlayer!.play()
+        
+        // is playing will be updated when we receive AVPlayerItem notification 
     }
     
     func stop() {
@@ -53,14 +55,18 @@ class StreamingService : NSObject {
                                                   name: AVAudioSession.interruptionNotification,
                                                   object: AVAudioSession.sharedInstance())
 
-        radioPlayer?.pause()
         playerItem?.removeObserver(self,
                                    forKeyPath: #keyPath(AVPlayerItem.timedMetadata))
         playerItem?.removeObserver(self,
                                    forKeyPath: #keyPath(AVPlayerItem.status))
+
+        radioPlayer?.pause()
         radioPlayer = nil
         
+        let app = UIApplication.shared.delegate as! AppDelegate
+        app.isPlaying = false
     }
+    
     func onStatusChange(playerItem: AVPlayerItem, status : AVPlayerItem.Status) {
         let app = UIApplication.shared.delegate as! AppDelegate
 

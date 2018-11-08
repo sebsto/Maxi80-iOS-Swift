@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public private(set) var currentTrack : String
     public var isPlaying = false
 
-//    public let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
+    public let radioStationDataNotificationName = Notification.Name("didReceiveRadioStationData")
     public let metaDataNotificationName = Notification.Name("didReceiveIcyMetaData")
     public var appSyncClient: AWSAppSyncClient?
     
@@ -170,7 +170,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     os_log_error(self.LOG, "Received nil data for station, using default value")
                 }
             
-                self.setTrack(artist: self.station.name, track: self.station.desc)
+                // notify listeners radio data are available (only NowPlayingViewController at this stage)
+                NotificationCenter.default.post(name: self.radioStationDataNotificationName,
+                                                object: ["station": self.station])
             }
         }
     }

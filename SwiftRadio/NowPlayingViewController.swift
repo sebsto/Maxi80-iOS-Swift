@@ -51,10 +51,10 @@ class NowPlayingViewController: UIViewController {
         let app = UIApplication.shared.delegate as! AppDelegate
 
         // add ourselves as observer to be notified when radio station is loaded
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(onDidReceiveRadioStationData),
-//                                               name: app.radioStationDataNotificationName,
-//                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onDidReceiveRadioStationData),
+                                               name: app.radioStationDataNotificationName,
+                                               object: nil)
         
         // add ourselves as observer to be notified when stream meta data is changing
         NotificationCenter.default.addObserver(self,
@@ -68,7 +68,7 @@ class NowPlayingViewController: UIViewController {
         // set temporary radio name on labels
         self.updateLabels(artist: app.currentArtist, track: app.currentTrack)
 
-        // play is triggered by the App, after it will receives the radio station details
+        // play is triggered later, after we will receives the radio station details
         
     }
     
@@ -76,9 +76,9 @@ class NowPlayingViewController: UIViewController {
         // Be a good citizen and de-register ourself from Notification Center
         let app = UIApplication.shared.delegate as! AppDelegate
 
-//        NotificationCenter.default.removeObserver(self,
-//                                                  name: app.radioStationDataNotificationName,
-//                                                object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: app.radioStationDataNotificationName,
+                                                object: nil)
         
         NotificationCenter.default.removeObserver(self,
                                                   name: app.metaDataNotificationName,
@@ -89,66 +89,38 @@ class NowPlayingViewController: UIViewController {
             object: AVAudioSession.sharedInstance())
     }
     
-    @objc func onDidReceiveMetaData(_ notification:Notification) {
+    //*****************************************************************
+    // MARK: - Player Controls (Play/Pause)
+    //*****************************************************************
+    
+    func start() {
+        player.start()
+        
+        // change image
+        playPauseButton.setImage(UIImage(named: "btn-pause")!, for: .normal)
+    }
+    
+    func stop() {
         let app = UIApplication.shared.delegate as! AppDelegate
         
-        DispatchQueue.main.async {
-            
-            // avoid refreshing at app start, when we receive radio station data
-            if (app.isPlaying) {
-                self.updateLabels(artist: app.currentArtist, track: app.currentTrack)
-                self.loadAlbumArtwork()
-            } else {
-                // when we receive meta data and the app is not playing, it means we just receive the radio name
-                // let's play
-                // this is made possible because we change the isPlaying flag as soon as the player is buffering.
-                self.pausePlayPressed()
-            }
-        }
-    }
+        player.stop()
 
-//    @objc func onDidReceiveRadioStationData(_ notification:Notification) {
-//
-//        // do not use the notification object has it might be nil
-//
-//        let app = UIApplication.shared.delegate as! AppDelegate
-//
-//        // update UI on main thread
-//        DispatchQueue.main.async {
-//
-//            // update labels with station name
-//            self.updateLabels(artist: app.station.name, track: app.station.desc)
-//
-//            // Set View Title
-//            self.title = app.station.name
-//
-//            // play
-//            self.pausePlayPressed()
-//        }
-//    }
-    
-    //*****************************************************************
-    // MARK: - Player Controls (Play/Pause/Volume)
-    //*****************************************************************
+        // force a refresh of the cover art and track & artist name
+        app.setTrack(artist: nil, track: nil)
+
+        // change button image
+        playPauseButton.setImage(UIImage(named: "btn-play")!, for: .normal)
+
+    }
     
     @IBAction func pausePlayPressed() {
 
         let app = UIApplication.shared.delegate as! AppDelegate
 
         if (app.isPlaying) {
-            player.stop()
-
-            // change button image
-            playPauseButton.setImage(UIImage(named: "btn-play")!, for: .normal)
-            
-            // force a refresh of the cover art and track & artist name
-            app.setTrack(artist: nil, track: nil)
-            
+            self.stop()
         } else {
-            player.start()
-            
-            // change image
-            playPauseButton.setImage(UIImage(named: "btn-pause")!, for: .normal)
+            self.start()
         }
     }
 
@@ -192,7 +164,34 @@ class NowPlayingViewController: UIViewController {
     // MARK: - Label management
     //*****************************************************************
     
+    @objc func onDidReceiveRadioStationData(_ notification:Notification) {
+        
+        // do not use the notification object has it might be nil
+        
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
+        // update UI on main thread
+        DispatchQueue.main.async {
+            
+            // update labels and cover with Station Name
+            self.updateLabels(artist: app.station.name, track: app.station.desc)
+            self.updateAlbumArtwork()
 
+            // play
+            self.start()
+        }
+    }
+
+    
+    @objc func onDidReceiveMetaData(_ notification:Notification) {
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
+        DispatchQueue.main.async {
+            self.updateLabels(artist: app.currentArtist, track: app.currentTrack)
+            self.updateAlbumArtwork()
+        }
+    }
+    
     func updateLabels(artist: String, track: String) {
         
         // fade out
@@ -224,7 +223,7 @@ class NowPlayingViewController: UIViewController {
     //*****************************************************************
     
     // update the image on the screen
-    func updateAlbumImage(url : URL) {
+    func loadAlbumImage(url : URL) {
         
         // schedule loading of the URL
         DispatchQueue.global().async {
@@ -278,7 +277,7 @@ class NowPlayingViewController: UIViewController {
     }
 
     // load the artwork from our backend API
-    func loadAlbumArtwork() {
+    func updateAlbumArtwork() {
 
         // Turn on network activity indicator (will be turned off after downloading the image)
         DispatchQueue.main.async {
@@ -312,14 +311,14 @@ class NowPlayingViewController: UIViewController {
                 
                 // load the image from the URL we received
                 if let url = URL(string: artwork.url!) {
-                    self.updateAlbumImage(url: url)
+                    self.loadAlbumImage(url: url)
                 }
             }
         }
     }
 
     //*****************************************************************
-    // MARK: - Segue adn Navigation
+    // MARK: - Segue and Navigation
     //*****************************************************************
         
     @IBAction func shareButtonPressed(_ sender: UIButton) {
