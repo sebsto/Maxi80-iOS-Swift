@@ -62,6 +62,9 @@ class NowPlayingViewController: UIViewController {
         // Setup slider
         prepareVolumeSlider()
         
+        // set temporary radio name on labels
+        self.updateLabels(artist: app.currentArtist, track: app.currentTrack)
+
         // play is triggered by the App, after it will receives the radio station details
         
     }
@@ -90,8 +93,7 @@ class NowPlayingViewController: UIViewController {
             
             // avoid refreshing at app start, when we receive radio station data
             if (app.isPlaying) {
-                self.artistLabel.text = app.currentArtist
-                self.songLabel.text = app.currentTrack
+                self.updateLabels(artist: app.currentArtist, track: app.currentTrack)
                 self.loadAlbumArtwork()
             } else {
                 // when we receive meta data and the app is not playing, it means we just receive the radio name
@@ -158,6 +160,7 @@ class NowPlayingViewController: UIViewController {
         // Note: This slider implementation uses a hidden MPVolumeView
         
         let volumeView = MPVolumeView(frame: slider.superview!.bounds)
+        volumeView.isHidden = true
         for view in volumeView.subviews {
             if let slider = view as? UISlider {
                 mpVolumeSlider = slider
@@ -183,8 +186,16 @@ class NowPlayingViewController: UIViewController {
     }
     
     func updateLabels(artist: String, track: String) {
+        
+        self.songLabel.alpha = 0.0
+        self.artistLabel.alpha = 0.0
         songLabel.text = track
         artistLabel.text = artist
+        UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: {
+            self.songLabel.alpha = 1.0
+            self.artistLabel.alpha = 1.0
+        }).startAnimation()
+
     }
     
     //*****************************************************************
@@ -215,14 +226,16 @@ class NowPlayingViewController: UIViewController {
         
         // update GUI on main thread
         DispatchQueue.main.async {
-            // Update cover image struct
-            self.coverImageView.image = image
             
             // Turn off network activity indicator
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            
-            // Animate artwork
-            // TODO
+
+            // Update cover image struct with animation
+            self.coverImageView.alpha = 0.0
+            self.coverImageView.image = image
+            UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: {
+                self.coverImageView.alpha = 1.0
+            }).startAnimation()
             
             // Update lockscreen
             self.updateLockScreen()
@@ -233,9 +246,11 @@ class NowPlayingViewController: UIViewController {
     // load the artwork from our backend API
     func loadAlbumArtwork() {
 
+        // Turn on network activity indicator (will be turned off after downloading the image)
         DispatchQueue.main.async {
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
         }
+        
 
         // get our AppSync client
         let app = UIApplication.shared.delegate as! AppDelegate
@@ -246,7 +261,7 @@ class NowPlayingViewController: UIViewController {
                              cachePolicy: .fetchIgnoringCacheData)  {
                                 (result, error) in
                                 
-            if error != nil {
+                if error != nil {
                 
                 let e = error! as! AWSAppSyncClientError
                 let response = e.response
