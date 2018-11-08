@@ -194,13 +194,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // callback to receive metadata
     func handleiCyMetaData(metadata : String) {
-        var data = metadata.split(separator: "-")
+        var data = metadata.components(separatedBy: " - ")
         os_log_debug(LOG, "Meta Data : \(data)")
-        if (data.count < 2) {
-            setTrack(artist: nil, track: metadata)
-        } else {
+        if (data.count == 2) {
             setTrack(artist: data[0].trimmingCharacters(in: .whitespacesAndNewlines),
                      track: data[1].trimmingCharacters(in: .whitespacesAndNewlines))
+        } else {
+            
+            //let's try without space
+            data = metadata.components(separatedBy: "-")
+            if (data.count == 2) {
+                setTrack(artist: data[0].trimmingCharacters(in: .whitespacesAndNewlines),
+                         track: data[1].trimmingCharacters(in: .whitespacesAndNewlines))
+            } else {
+                setTrack(artist: nil, track: metadata)
+            }
+
         }
     }
 }
