@@ -197,7 +197,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if (data.count < 2) {
             setTrack(artist: nil, track: metadata)
         } else {
-            setTrack(artist: data[0].trimmingCharacters(in: .whitespacesAndNewlines), track: data[1].trimmingCharacters(in: .whitespacesAndNewlines))
+            setTrack(artist: data[0].trimmingCharacters(in: .whitespacesAndNewlines),
+                     track: data[1].trimmingCharacters(in: .whitespacesAndNewlines))
         }
     }
 }

@@ -62,6 +62,8 @@ class NowPlayingViewController: UIViewController {
         // Setup slider
         prepareVolumeSlider()
         
+        // play is triggered by the App, after it will receives the radio station details
+        
     }
     
     deinit {
