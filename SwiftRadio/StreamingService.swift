@@ -24,7 +24,8 @@ class StreamingService : NSObject {
     func start() {
         
         let app = UIApplication.shared.delegate as! AppDelegate
-        
+        playerItem = AVPlayerItem(url: URL(string: app.station.streamUrl)!)
+
         // add observer for meta data
         playerItem!.addObserver(self,
                                 forKeyPath: #keyPath(AVPlayerItem.timedMetadata), //"timedMetadata",
@@ -43,7 +44,6 @@ class StreamingService : NSObject {
                                                name: AVAudioSession.interruptionNotification,
                                                object: AVAudioSession.sharedInstance())
         
-        playerItem = AVPlayerItem(url: URL(string: app.station.streamUrl)!)
         radioPlayer = AVPlayer(playerItem: playerItem)
         radioPlayer!.play()
     }
@@ -70,12 +70,12 @@ class StreamingService : NSObject {
                 // Player item is ready to play.
                 os_log_debug(LOG,"Player is ready to play")
                 app.isPlaying = true
-                
+            
             case .failed:
                 // Player item failed. See error.
                 os_log_debug(LOG,"Player failed. \(String(describing: playerItem.error))")
                 stop()
-                
+            
             case .unknown:
                 // Player item is not yet ready.
                 os_log_debug(LOG,"Player status unknown.")

@@ -23,7 +23,6 @@
 		9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9409E1251ABF6FEA00312E2B /* Images.xcassets */; };
 		9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */; };
 		94452E4F1AD6F24700BFE7A5 /* PopUpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94452E4E1AD6F24700BFE7A5 /* PopUpMenuViewController.swift */; };
-		94D260981B45E8B800DE671C /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D260971B45E8B800DE671C /* Track.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +55,6 @@
 		9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlayingViewController.swift; sourceTree = "<group>"; };
 		942C52F45EB596B635008D2D /* Pods-Maxi80UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Maxi80UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Maxi80UITests/Pods-Maxi80UITests.release.xcconfig"; sourceTree = "<group>"; };
 		94452E4E1AD6F24700BFE7A5 /* PopUpMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpMenuViewController.swift; sourceTree = "<group>"; };
-		94D260971B45E8B800DE671C /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
 		B61BA13504D628B1E2E0D40A /* Pods_Maxi80UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Maxi80UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90086461BBE40AF00E5372C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		CF60B5E3806D8629AC4EEB77 /* Pods-Maxi80.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Maxi80.release.xcconfig"; path = "Pods/Target Support Files/Pods-Maxi80/Pods-Maxi80.release.xcconfig"; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 				9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */,
 				008DAAEA21936BD000B851FE /* StreamingService.swift */,
 				94D2608E1B45D0F800DE671C /* ViewControllers */,
-				94E976191B1A8BFB00F52B1E /* Model */,
 				94AC70AF1AD05C7400652982 /* API */,
 				9409E1221ABF6FEA00312E2B /* Main.storyboard */,
 				00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */,
@@ -188,14 +185,6 @@
 				94452E4E1AD6F24700BFE7A5 /* PopUpMenuViewController.swift */,
 			);
 			name = ViewControllers;
-			sourceTree = "<group>";
-		};
-		94E976191B1A8BFB00F52B1E /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				94D260971B45E8B800DE671C /* Track.swift */,
-			);
-			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -403,7 +392,6 @@
 				9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */,
 				00F5AFE41E74270200DB8B4A /* Extension.swift in Sources */,
 				008DAAED2193796200B851FE /* Logger.swift in Sources */,
-				94D260981B45E8B800DE671C /* Track.swift in Sources */,
 				94452E4F1AD6F24700BFE7A5 /* PopUpMenuViewController.swift in Sources */,
 				9409E11C1ABF6FEA00312E2B /* AppDelegate.swift in Sources */,
 			);
