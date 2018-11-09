@@ -153,7 +153,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                     (result, error) in
                                     
             if error != nil {
+                
                 os_log_error(self.LOG, "Error when calling Radio Station Data API : \(error!.localizedDescription)")
+                
+                let alert = UIAlertController(title: "Error", message: "Can not connect to the network.\n\(error!.localizedDescription)\nBe sure Data or Wifi is enabled and try again.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: { _ in
+                }))
+                self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+                
             } else {
                 
                 if let station = result?.data?.station  {
