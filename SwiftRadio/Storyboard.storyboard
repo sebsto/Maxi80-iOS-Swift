@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Vxu-ee-7Js">
-    <device id="retina4_0" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,32 +15,32 @@
             <objects>
                 <viewController title="Now Playing View Controller" id="JbL-qG-6Vg" customClass="NowPlayingViewController" customModule="Maxi80" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gg1-iA-188" userLabel="Top Level View">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="1Ka-0Y-c4g" userLabel="Background Image">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cover" translatesAutoresizingMaskIntoConstraints="NO" id="P2I-Zn-q8F" userLabel="Cover Image">
-                                <rect key="frame" x="10" y="40" width="300" height="284"/>
+                                <rect key="frame" x="10" y="40" width="394" height="368"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vvg-L7-u98">
-                                <rect key="frame" x="10" y="340" width="300" height="21"/>
+                                <rect key="frame" x="10" y="428.33333333333331" width="394" height="21"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Track Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TTN-Zi-Ewp" userLabel="Track Name">
-                                <rect key="frame" x="10" y="371" width="300" height="18"/>
+                                <rect key="frame" x="10" y="459.33333333333331" width="394" height="18"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_maxi80" translatesAutoresizingMaskIntoConstraints="NO" id="q7E-zN-fqd" userLabel="Logo">
-                                <rect key="frame" x="10" y="529.5" width="64" height="28.5"/>
+                                <rect key="frame" x="10" y="689.33333333333337" width="82.666666666666671" height="36.666666666666629"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="89b-OT-0rM" userLabel="Share Button">
-                                <rect key="frame" x="246" y="526" width="32" height="32"/>
+                                <rect key="frame" x="340" y="694" width="32" height="32"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" image="btn-share"/>
                                 <connections>
@@ -48,21 +48,21 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aai-FG-MdE" userLabel="Info Button">
-                                <rect key="frame" x="288" y="532.5" width="22" height="25.5"/>
+                                <rect key="frame" x="382" y="700.33333333333337" width="22" height="25.666666666666629"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <segue destination="xDA-vR-On9" kind="showDetail" id="yte-TD-n1G"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czn-x5-Lro" userLabel="Play/Pause Button">
-                                <rect key="frame" x="138" y="406" width="44" height="44"/>
+                                <rect key="frame" x="185" y="550.66666666666663" width="44" height="44"/>
                                 <state key="normal" image="btn-play"/>
                                 <connections>
                                     <action selector="pausePlayPressed" destination="JbL-qG-6Vg" eventType="touchUpInside" id="fLr-FY-MLt"/>
                                 </connections>
                             </button>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" minimumValueImage="vol-min" maximumValueImage="vol-max" translatesAutoresizingMaskIntoConstraints="NO" id="dbb-sV-XHh" userLabel="Volume Slider">
-                                <rect key="frame" x="8" y="473.5" width="304" height="31"/>
+                                <rect key="frame" x="8" y="625.33333333333337" width="398" height="31"/>
                                 <connections>
                                     <action selector="volumeSliderChanged:" destination="JbL-qG-6Vg" eventType="valueChanged" id="TIs-G7-qPr"/>
                                 </connections>
@@ -137,20 +137,20 @@
             <objects>
                 <viewController title="About View Controller" id="xDA-vR-On9" customClass="AboutViewController" customModule="Maxi80" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bTp-gB-qW1">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="mpm-Qz-d1m" userLabel="Background Image">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_maxi80" translatesAutoresizingMaskIntoConstraints="NO" id="L4M-d7-0UC" userLabel="Logo">
-                                <rect key="frame" x="20" y="70" width="280" height="157.5"/>
+                                <rect key="frame" x="20" y="70.000000000000014" width="374" height="210.33333333333337"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="L4M-d7-0UC" secondAttribute="height" multiplier="16:9" id="rvw-Ub-SR3"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="td2-46-XhJ" userLabel="Website">
-                                <rect key="frame" x="80" y="273" width="70" height="30"/>
+                                <rect key="frame" x="80" y="336.33333333333331" width="70" height="30"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="Fh6-bh-mWQ"/>
@@ -163,7 +163,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u3e-tN-Qx0" userLabel="Donate">
-                                <rect key="frame" x="170" y="273" width="70" height="30"/>
+                                <rect key="frame" x="264" y="336.33333333333331" width="70" height="30"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="fQm-mP-UoS"/>
@@ -175,13 +175,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Maxi 80 iOS v0.0.0 (2018110000)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gB7-5j-lkj">
-                                <rect key="frame" x="26.5" y="395" width="267" height="21"/>
+                                <rect key="frame" x="73.666666666666686" y="477.33333333333331" width="267" height="21"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Based on Swift Radio by Matthew Fecher." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TA0-k9-F2p" userLabel="Thanks">
-                                <rect key="frame" x="18" y="441" width="284" height="18"/>
+                                <rect key="frame" x="65" y="523.33333333333337" width="284" height="18"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -222,7 +222,7 @@
         <image name="btn-share" width="32" height="32"/>
         <image name="cover" width="400" height="400"/>
         <image name="logo_maxi80" width="180" height="70"/>
-        <image name="vol-max" width="16.5" height="14"/>
-        <image name="vol-min" width="11" height="12.5"/>
+        <image name="vol-max" width="16.666666030883789" height="14"/>
+        <image name="vol-min" width="11" height="12.666666984558105"/>
     </resources>
 </document>
