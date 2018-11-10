@@ -1,11 +1,11 @@
 PODS:
-  - AWSAppSync (2.6.23):
-    - AWSCore (~> 2.6.6)
+  - AWSAppSync (2.6.24):
+    - AWSCore (~> 2.7.0)
     - ReachabilitySwift (~> 4.0.0)
     - SQLite.swift (= 0.11.4)
-  - AWSCognito (2.6.33):
-    - AWSCore (= 2.6.33)
-  - AWSCore (2.6.33)
+  - AWSCognito (2.7.0):
+    - AWSCore (= 2.7.0)
+  - AWSCore (2.7.0)
   - ReachabilitySwift (4.0.0)
   - SQLite.swift (0.11.4):
     - SQLite.swift/standard (= 0.11.4)
@@ -13,8 +13,8 @@ PODS:
 
 DEPENDENCIES:
   - AWSAppSync (~> 2.6.23)
-  - AWSCognito (~> 2.6.33)
-  - AWSCore (~> 2.6.33)
+  - AWSCognito (~> 2.7.0)
+  - AWSCore (~> 2.7.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -25,12 +25,12 @@ SPEC REPOS:
     - SQLite.swift
 
 SPEC CHECKSUMS:
-  AWSAppSync: 6ff14e36d3476f861996aac7a45f51cf1bdf7371
-  AWSCognito: 0d7106509da503589ea14ee468fa85cb7fab65ad
-  AWSCore: ed83f7e36fb6c0211b04a439d8e564aa23bfe37d
+  AWSAppSync: 88b8bcf344073d2cbb312bf6c7f3193cc0893d60
+  AWSCognito: aafac02966ff6aa2d6e631c3d57763d89cfd0fb2
+  AWSCore: 77271b391798e25af651083cbeacfbbe5c8b2038
   ReachabilitySwift: e67b2cab4d5386053673d8a7421b5981e5f08259
   SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
 
-PODFILE CHECKSUM: d48488ddeb86ac4daef8a483aa6be01e08a6b634
+PODFILE CHECKSUM: da26170affc44cd566f5b954a9d9389004f92fed
 
 COCOAPODS: 1.5.3
