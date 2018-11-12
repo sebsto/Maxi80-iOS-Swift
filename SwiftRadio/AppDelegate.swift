@@ -41,7 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             streamUrl: "https://audio1.maxi80.com",
             imageUrl: "cover.png",
             desc: "La radio de toute une génération",
-            longDesc: "Le meilleur de la musique des années 80"
+            longDesc: "Le meilleur de la musique des années 80",
+            websiteUrl: "https://maxi80.com",
+            donationUrl: "https://www.maxi80.com/paypal.htm"
         )
         self.currentArtist = self.station.name
         self.currentTrack = self.station.desc
@@ -166,13 +168,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let station = result?.data?.station  {
                     
                     os_log_debug(self.LOG, "Radio Station data received : \(station)")
-                    self.station = StationQuery.Data.Station(
-                        name: station.name,
-                        streamUrl: station.streamUrl,
-                        imageUrl: station.imageUrl,
-                        desc: station.desc,
-                        longDesc: station.longDesc
-                    )
+                    self.station = station
+                    
                 } else {
                     os_log_error(self.LOG, "Received nil data for station, using default value")
                 }

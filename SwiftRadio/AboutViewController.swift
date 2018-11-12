@@ -46,20 +46,20 @@ class AboutViewController: UIViewController {
    
     @IBAction func website() {
         
-//        let app = UIApplication.shared.delegate as! AppDelegate
-        
-        // TODO : must use URL returned by web service
+        let app = UIApplication.shared.delegate as! AppDelegate
         
         // Use your own website here
-        if let url = URL(string: "https://www.maxi80.com") {
+        if let url = URL(string: app.station.websiteUrl) {
             UIApplication.shared.open(url,options: [:], completionHandler: nil)
         }
     }
         
     @IBAction func donateButtonDidTouch(_ sender: UIButton) {
         
+        let app = UIApplication.shared.delegate as! AppDelegate
+
         // Use your own website here
-        if let url = URL(string: "https://www.maxi80.com/paypal.htm") {
+        if let url = URL(string: app.station.donationUrl) {
             UIApplication.shared.open(url,options: [:], completionHandler: nil)
         }
     }
