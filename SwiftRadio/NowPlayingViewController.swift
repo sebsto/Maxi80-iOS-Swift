@@ -265,13 +265,12 @@ class NowPlayingViewController: UIViewController {
                 UIViewPropertyAnimator(duration: self.ANIMATION_TIME, curve: .easeOut, animations: {
                     self.coverImageView.alpha = 1.0
                 }).startAnimation()
+
+                // Update lockscreen
+                self.updateLockScreen()
             }
             
             animator.startAnimation()
-
-            
-            // Update lockscreen
-            self.updateLockScreen()
         }
 
     }
