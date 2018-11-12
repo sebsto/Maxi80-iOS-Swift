@@ -328,22 +328,6 @@ class NowPlayingViewController: UIViewController {
         present(activityViewController, animated: true, completion: nil)
     }
     
-    @IBAction func emailButtonDidTouch(_ sender: UIButton) {
-        
-        // Use your own email address & subject
-        let receipients = ["seb@maxi80.com"]
-        let subject = "From Maxi80 iOS"
-        let messageBody = ""
-        
-        let configuredMailComposeViewController = configureMailComposeViewController(recepients: receipients, subject: subject, messageBody: messageBody)
-        
-        if canSendMail() {
-            self.present(configuredMailComposeViewController, animated: true, completion: nil)
-        } else {
-            showSendMailErrorAlert()
-        }
-    }
-    
     //*****************************************************************
     // MARK: - MPNowPlayingInfoCenter (Lock screen)
     //*****************************************************************
@@ -381,41 +365,3 @@ class NowPlayingViewController: UIViewController {
     }
     
 }
-
-//*****************************************************************
-// MARK: - MFMailComposeViewController Delegate
-//*****************************************************************
-
-extension NowPlayingViewController: MFMailComposeViewControllerDelegate {
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-        controller.dismiss(animated: true, completion: nil)
-    }
-    
-    func canSendMail() -> Bool {
-        return MFMailComposeViewController.canSendMail()
-    }
-    
-    func configureMailComposeViewController(recepients: [String], subject: String, messageBody: String) -> MFMailComposeViewController {
-        
-        let mailComposerVC = MFMailComposeViewController()
-        mailComposerVC.mailComposeDelegate = self
-        
-        mailComposerVC.setToRecipients(recepients)
-        mailComposerVC.setSubject(subject)
-        mailComposerVC.setMessageBody(messageBody, isHTML: false)
-        
-        return mailComposerVC
-    }
-    
-    func showSendMailErrorAlert() {
-        //let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
-        //sendMailErrorAlert.show()
-        
-        let alert = UIAlertController(title: "Could Not Send Email", message: "Your device can not send e-mail.  Please check e-mail configuration and try again.", preferredStyle:UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .`default`, handler: { _ in
-            os_log_debug(self.LOG, "The \"OK\" alert occured.")
-        }))
-    }
-}
-
