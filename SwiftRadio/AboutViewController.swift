@@ -11,6 +11,7 @@ import UIKit
 class AboutViewController: UIViewController {
 
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var aboutLogo: UIImageView!
     
     //*****************************************************************
     // MARK: - ViewDidLoad
@@ -22,10 +23,15 @@ class AboutViewController: UIViewController {
         let app = UIApplication.shared.delegate as! AppDelegate
         
         // Add gesture recognizer to dismiss view when touched
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(close))
+        let grClose = UITapGestureRecognizer(target: self, action: #selector(close))
         self.view.isUserInteractionEnabled = true
-        self.view.addGestureRecognizer(gestureRecognizer)
+        self.view.addGestureRecognizer(grClose)
         
+        // Add gesture recognizer to lin to web site when touched
+        let grWebsite = UITapGestureRecognizer(target: self, action: #selector(website))
+        self.aboutLogo.isUserInteractionEnabled = true
+        self.aboutLogo.addGestureRecognizer(grWebsite)
+
         // Set version from bundle info
         versionLabel.text = "\(app.station.name) for iOS v\(Bundle.main.versionNumber ?? "") (\(Bundle.main.buildNumber ?? ""))"
     }
@@ -38,7 +44,7 @@ class AboutViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
    
-    @IBAction func websiteButtonDidTouch(_ sender: UIButton) {
+    @IBAction func website() {
         
 //        let app = UIApplication.shared.delegate as! AppDelegate
         

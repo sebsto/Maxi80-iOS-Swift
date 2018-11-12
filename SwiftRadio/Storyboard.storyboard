@@ -143,45 +143,17 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="mpm-Qz-d1m" userLabel="Background Image">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_maxi80" translatesAutoresizingMaskIntoConstraints="NO" id="L4M-d7-0UC" userLabel="Logo">
-                                <rect key="frame" x="20" y="70.000000000000014" width="374" height="210.33333333333337"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="L4M-d7-0UC" secondAttribute="height" multiplier="16:9" id="rvw-Ub-SR3"/>
-                                </constraints>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="about" translatesAutoresizingMaskIntoConstraints="NO" id="GVv-Sz-hmw">
+                                <rect key="frame" x="20" y="70" width="374" height="331.33333333333331"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="td2-46-XhJ" userLabel="Website">
-                                <rect key="frame" x="80" y="336.33333333333331" width="70" height="30"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="Fh6-bh-mWQ"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="15"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Website"/>
-                                <connections>
-                                    <action selector="websiteButtonDidTouch:" destination="xDA-vR-On9" eventType="primaryActionTriggered" id="GIX-Dg-S1U"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u3e-tN-Qx0" userLabel="Donate">
-                                <rect key="frame" x="264" y="336.33333333333331" width="70" height="30"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="fQm-mP-UoS"/>
-                                </constraints>
-                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" title="Donate"/>
-                                <connections>
-                                    <action selector="donateButtonDidTouch:" destination="xDA-vR-On9" eventType="primaryActionTriggered" id="Fzh-lc-ExE"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Maxi 80 iOS v0.0.0 (2018110000)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gB7-5j-lkj">
-                                <rect key="frame" x="73.666666666666686" y="477.33333333333331" width="267" height="21"/>
+                                <rect key="frame" x="73.666666666666686" y="622" width="267" height="21"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Based on Swift Radio by Matthew Fecher." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TA0-k9-F2p" userLabel="Thanks">
-                                <rect key="frame" x="65" y="523.33333333333337" width="284" height="18"/>
+                                <rect key="frame" x="65" y="668" width="284" height="18"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -189,34 +161,33 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="gB7-5j-lkj" firstAttribute="top" secondItem="td2-46-XhJ" secondAttribute="bottom" multiplier="1.3" constant="1" id="32P-D6-scF"/>
-                            <constraint firstItem="td2-46-XhJ" firstAttribute="leading" secondItem="c54-BP-X3z" secondAttribute="leading" constant="80" id="Esc-sf-htj"/>
+                            <constraint firstItem="GVv-Sz-hmw" firstAttribute="centerX" secondItem="bTp-gB-qW1" secondAttribute="centerX" id="1n7-Zp-QyL"/>
                             <constraint firstItem="mpm-Qz-d1m" firstAttribute="top" secondItem="bTp-gB-qW1" secondAttribute="top" id="GwI-mc-qed"/>
                             <constraint firstItem="mpm-Qz-d1m" firstAttribute="leading" secondItem="c54-BP-X3z" secondAttribute="leading" id="IGm-ba-A4c"/>
-                            <constraint firstItem="td2-46-XhJ" firstAttribute="top" secondItem="L4M-d7-0UC" secondAttribute="bottom" multiplier="1.2" id="L4V-m2-Yvh"/>
-                            <constraint firstItem="u3e-tN-Qx0" firstAttribute="top" secondItem="L4M-d7-0UC" secondAttribute="bottom" multiplier="1.2" id="dOj-tJ-vVX"/>
+                            <constraint firstItem="GVv-Sz-hmw" firstAttribute="top" secondItem="c54-BP-X3z" secondAttribute="top" constant="50" id="K8R-6D-IgL"/>
+                            <constraint firstItem="TA0-k9-F2p" firstAttribute="bottom" secondItem="c54-BP-X3z" secondAttribute="bottom" constant="-50" id="Lc4-tL-Nj2"/>
                             <constraint firstItem="TA0-k9-F2p" firstAttribute="centerX" secondItem="bTp-gB-qW1" secondAttribute="centerX" id="hSl-xB-jof"/>
-                            <constraint firstItem="L4M-d7-0UC" firstAttribute="leading" secondItem="c54-BP-X3z" secondAttribute="leading" constant="20" id="hkq-Xb-lXx"/>
                             <constraint firstItem="gB7-5j-lkj" firstAttribute="centerX" secondItem="bTp-gB-qW1" secondAttribute="centerX" id="j8K-nc-SJu"/>
-                            <constraint firstItem="L4M-d7-0UC" firstAttribute="trailing" secondItem="c54-BP-X3z" secondAttribute="trailing" constant="-20" id="mku-dW-OGF"/>
-                            <constraint firstItem="c54-BP-X3z" firstAttribute="trailing" secondItem="u3e-tN-Qx0" secondAttribute="trailing" constant="80" id="qUN-f4-6FF"/>
-                            <constraint firstItem="L4M-d7-0UC" firstAttribute="top" secondItem="c54-BP-X3z" secondAttribute="top" constant="50" id="rHC-4H-jTV"/>
-                            <constraint firstItem="c54-BP-X3z" firstAttribute="bottom" secondItem="mpm-Qz-d1m" secondAttribute="bottom" id="uyO-Ev-hqy"/>
-                            <constraint firstItem="c54-BP-X3z" firstAttribute="trailing" secondItem="mpm-Qz-d1m" secondAttribute="trailing" id="wj5-ZB-V7n"/>
+                            <constraint firstItem="GVv-Sz-hmw" firstAttribute="leading" secondItem="bTp-gB-qW1" secondAttribute="leadingMargin" id="nN3-5y-hqa"/>
+                            <constraint firstItem="GVv-Sz-hmw" firstAttribute="height" secondItem="bTp-gB-qW1" secondAttribute="height" multiplier="0.45" id="rO2-mX-deT"/>
+                            <constraint firstItem="mpm-Qz-d1m" firstAttribute="bottom" secondItem="c54-BP-X3z" secondAttribute="bottom" id="uyO-Ev-hqy"/>
+                            <constraint firstItem="mpm-Qz-d1m" firstAttribute="trailing" secondItem="c54-BP-X3z" secondAttribute="trailing" id="wj5-ZB-V7n"/>
                             <constraint firstItem="TA0-k9-F2p" firstAttribute="top" secondItem="gB7-5j-lkj" secondAttribute="bottom" constant="25" id="z92-Qp-gFH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="c54-BP-X3z"/>
                     </view>
                     <connections>
+                        <outlet property="aboutLogo" destination="GVv-Sz-hmw" id="2Ul-A9-g9Z"/>
                         <outlet property="versionLabel" destination="gB7-5j-lkj" id="Bqf-D4-bze"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z69-6a-b69" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="80.625" y="896.83098591549299"/>
+            <point key="canvasLocation" x="79.710144927536234" y="896.73913043478262"/>
         </scene>
     </scenes>
     <resources>
+        <image name="about" width="1024" height="1024"/>
         <image name="background" width="320" height="568"/>
         <image name="btn-play" width="44" height="44"/>
         <image name="btn-share" width="32" height="32"/>
