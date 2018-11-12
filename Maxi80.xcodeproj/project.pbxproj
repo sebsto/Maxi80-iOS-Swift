@@ -19,7 +19,6 @@
 		6C65D56BDF59FCE06EE278B2 /* Pods_Maxi80UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61BA13504D628B1E2E0D40A /* Pods_Maxi80UITests.framework */; };
 		85CF665A359A74EDBB6DE2E5 /* Pods_Maxi80.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F299A239417D240B4CF558AB /* Pods_Maxi80.framework */; };
 		9409E11C1ABF6FEA00312E2B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */; };
-		9409E1241ABF6FEA00312E2B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9409E1221ABF6FEA00312E2B /* Main.storyboard */; };
 		9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9409E1251ABF6FEA00312E2B /* Images.xcassets */; };
 		9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */; };
 		94452E4F1AD6F24700BFE7A5 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94452E4E1AD6F24700BFE7A5 /* AboutViewController.swift */; };
@@ -50,7 +49,6 @@
 		9409E1161ABF6FEA00312E2B /* Maxi80.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maxi80.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9409E11A1ABF6FEA00312E2B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9409E1231ABF6FEA00312E2B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9409E1251ABF6FEA00312E2B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlayingViewController.swift; sourceTree = "<group>"; };
 		942C52F45EB596B635008D2D /* Pods-Maxi80UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Maxi80UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Maxi80UITests/Pods-Maxi80UITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -141,7 +139,6 @@
 				008DAAEA21936BD000B851FE /* StreamingService.swift */,
 				94D2608E1B45D0F800DE671C /* ViewControllers */,
 				94AC70AF1AD05C7400652982 /* API */,
-				9409E1221ABF6FEA00312E2B /* Main.storyboard */,
 				00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */,
 				9409E1251ABF6FEA00312E2B /* Images.xcassets */,
 				9409E1191ABF6FEA00312E2B /* Supporting Files */,
@@ -289,7 +286,6 @@
 			files = (
 				006499BD21762C87007ABC1D /* awsconfiguration.json in Resources */,
 				00EB8A3921529A2100B111F0 /* Podfile in Resources */,
-				9409E1241ABF6FEA00312E2B /* Main.storyboard in Resources */,
 				9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */,
 				00CDB7452190A6B000E6AB8B /* Storyboard.storyboard in Resources */,
 			);
@@ -406,17 +402,6 @@
 			targetProxy = 2C5545BF1C1124DE00728469 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		9409E1221ABF6FEA00312E2B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9409E1231ABF6FEA00312E2B /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		2C5545C11C1124DE00728469 /* Debug */ = {
