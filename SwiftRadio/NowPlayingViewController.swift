@@ -134,7 +134,9 @@ class NowPlayingViewController: UIViewController {
         // http://blog.wizages.com/Swift-Volume-Controls/
         // Note: This slider implementation uses a hidden MPVolumeView
         
-        let volumeView = MPVolumeView(frame: slider.superview!.bounds)
+        let volumeView = MPVolumeView(frame: CGRect.zero)
+        self.view.backgroundColor = UIColor.clear
+        self.view.addSubview(volumeView)
         volumeView.isHidden = true
         for view in volumeView.subviews {
             if let slider = view as? UISlider {
@@ -150,9 +152,13 @@ class NowPlayingViewController: UIViewController {
     }
 
     @IBAction func volumeSliderChanged(_ sender:UISlider) {
+        // change the system volume
         if let vs = self.mpVolumeSlider {
             vs.value = sender.value
         }
+        
+        // change the player volume
+//        player.volume = sender.value
     }
     
     @objc func systemVolumeDidChange(notification: NSNotification) {

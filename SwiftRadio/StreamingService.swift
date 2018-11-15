@@ -15,6 +15,16 @@ class StreamingService : NSObject {
     private var radioPlayer : AVPlayer?
     private var playerItem : AVPlayerItem?
 
+    // the below changes the player volume, not the system volume.
+    public var volume : Float {
+        get { guard let rp = radioPlayer else { return 0.0}
+              return rp.volume
+        }
+        set { guard let rp = radioPlayer else { return }
+              rp.volume = newValue
+        }
+    }
+    
     let LOG = Logger.createOSLog(module: "Streaming Service")
 
     //*****************************************************************
