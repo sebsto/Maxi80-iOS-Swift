@@ -7,8 +7,8 @@ target 'Maxi80' do
 
   # Pods for Maxi80
   pod 'AWSAppSync', ' ~> 2.6.24'
-  pod 'AWSCore', '~> 2.7.2'
-  pod 'AWSCognito', '~> 2.7.2'
+  pod 'AWSCore', '~> 2.7.3'
+  pod 'AWSCognito', '~> 2.7.3'
   
   target 'Maxi80UITests' do
     inherit! :search_paths
