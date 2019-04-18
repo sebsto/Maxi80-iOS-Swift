@@ -96,6 +96,8 @@ class StreamingService : NSObject {
                 // Player item is not yet ready.
                 os_log_debug(LOG,"Player status unknown.")
                 stop()
+        @unknown default:
+            fatalError()
         }
     }
     

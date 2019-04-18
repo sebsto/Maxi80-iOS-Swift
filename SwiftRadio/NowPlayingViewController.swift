@@ -302,8 +302,8 @@ class NowPlayingViewController: UIViewController {
                 if error != nil {
                 
                 let e = error! as! AWSAppSyncClientError
-                let response = e.response
-                os_log_error(self.LOG, "Error call ArtWork API \(response!)")
+//                let response = e.response
+                os_log_error(self.LOG, "Error call ArtWork API \(e.errorDescription!)")
                                 
             } else {
                 
