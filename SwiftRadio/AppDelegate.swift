@@ -13,7 +13,7 @@ import AWSAppSync
 
 // https://aws.amazon.com/blogs/mobile/using-amazon-cognito-with-swift-sample-app-developer-guide-and-more/
 import AWSCore
-import AWSCognito
+//import AWSCognito
 
 protocol MetaDataDelegate {
     func onCurrentTrackChanged(artist: String, track: String)
@@ -113,20 +113,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func setupAppSync() {
         
-        // Initialize the Amazon Cognito credentials provider
-        let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
-                                                                 identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
-        
-        //appsync offline database
-        let databaseURL = URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent("maxi80")
         
         //initialize app sync
         do {
+            // Initialize the Amazon Cognito credentials provider
+            let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest1,
+                                                                    identityPoolId:"eu-west-1:74b938b1-4a81-43ed-a4de-86b37001110a")
+
             //AppSync configuration & client initialization
-            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncClientInfo: AWSAppSyncClientInfo(),
-                                                                  credentialsProvider : credentialsProvider,
-                                                                  databaseURL: databaseURL)
-            self.appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
+            let appSyncServiceConfig = try AWSAppSyncServiceConfig()
+            let appSyncConfig = try AWSAppSyncClientConfiguration(appSyncServiceConfig: appSyncServiceConfig,
+                                                                  credentialsProvider: credentialsProvider
+                                                                  )
+            
+            //AppSync configuration & client initialization
+            appSyncClient = try AWSAppSyncClient(appSyncConfig: appSyncConfig)
         } catch {
             os_log_error(LOG, "Error initializing appsync client. \(String(describing: error))")
         }
