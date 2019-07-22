@@ -6,13 +6,8 @@ target 'Maxi80' do
   use_frameworks!
 
   # Pods for Maxi80
-  pod 'AWSAppSync', ' ~> 2.11.0'
-  pod 'AWSCore', '~> 2.9.0'
-  pod 'AWSMobileClient', '~> 2.9.0'
-  
-  target 'Maxi80UITests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+  pod 'AWSAppSync', ' ~> 2.14.0'
+  pod 'AWSCore', '~> 2.9.9'
+  pod 'AWSMobileClient', '~> 2.9.9'
   
 end

@@ -15,24 +15,12 @@
 		00CDB7452190A6B000E6AB8B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */; };
 		00EB8A3921529A2100B111F0 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 00EB8A3821529A2100B111F0 /* Podfile */; };
 		00F5AFE41E74270200DB8B4A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F5AFE31E74270200DB8B4A /* Extension.swift */; };
-		2C5545BD1C1124DE00728469 /* SwiftRadioUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5545BC1C1124DE00728469 /* SwiftRadioUITests.swift */; };
-		6C65D56BDF59FCE06EE278B2 /* Pods_Maxi80UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61BA13504D628B1E2E0D40A /* Pods_Maxi80UITests.framework */; };
 		85CF665A359A74EDBB6DE2E5 /* Pods_Maxi80.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F299A239417D240B4CF558AB /* Pods_Maxi80.framework */; };
 		9409E11C1ABF6FEA00312E2B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E11B1ABF6FEA00312E2B /* AppDelegate.swift */; };
 		9409E1261ABF6FEA00312E2B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9409E1251ABF6FEA00312E2B /* Images.xcassets */; };
 		9409E1401ABF78B000312E2B /* NowPlayingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9409E13F1ABF78B000312E2B /* NowPlayingViewController.swift */; };
 		94452E4F1AD6F24700BFE7A5 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94452E4E1AD6F24700BFE7A5 /* AboutViewController.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		2C5545BF1C1124DE00728469 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9409E10E1ABF6FE900312E2B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9409E1151ABF6FEA00312E2B;
-			remoteInfo = SwiftRadio;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		006499BA21762BCE007ABC1D /* Maxi80BackendAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Maxi80BackendAPI.swift; sourceTree = "<group>"; };
@@ -42,7 +30,6 @@
 		00CDB7442190A6B000E6AB8B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		00EB8A3821529A2100B111F0 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		00F5AFE31E74270200DB8B4A /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
-		2C5545BA1C1124DE00728469 /* Maxi80UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Maxi80UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C5545BC1C1124DE00728469 /* SwiftRadioUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftRadioUITests.swift; sourceTree = "<group>"; };
 		2C5545BE1C1124DE00728469 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9071C1636030F0E02747BDD4 /* Pods-Maxi80UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Maxi80UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Maxi80UITests/Pods-Maxi80UITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,14 +48,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2C5545B71C1124DE00728469 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6C65D56BDF59FCE06EE278B2 /* Pods_Maxi80UITests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9409E1131ABF6FEA00312E2B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -127,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				9409E1161ABF6FEA00312E2B /* Maxi80.app */,
-				2C5545BA1C1124DE00728469 /* Maxi80UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,25 +165,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2C5545B91C1124DE00728469 /* Maxi80UITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "Maxi80UITests" */;
-			buildPhases = (
-				A9CC11C05F34B241082C4AC4 /* [CP] Check Pods Manifest.lock */,
-				2C5545B61C1124DE00728469 /* Sources */,
-				2C5545B71C1124DE00728469 /* Frameworks */,
-				2C5545B81C1124DE00728469 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2C5545C01C1124DE00728469 /* PBXTargetDependency */,
-			);
-			name = Maxi80UITests;
-			productName = SwiftRadioUITests;
-			productReference = 2C5545BA1C1124DE00728469 /* Maxi80UITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		9409E1151ABF6FEA00312E2B /* Maxi80 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9409E1381ABF6FEA00312E2B /* Build configuration list for PBXNativeTarget "Maxi80" */;
@@ -236,15 +195,10 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = stormacq.com;
 				TargetAttributes = {
-					2C5545B91C1124DE00728469 = {
-						CreatedOnToolsVersion = 7.1;
-						LastSwiftMigration = 1020;
-						TestTargetID = 9409E1151ABF6FEA00312E2B;
-					};
 					9409E1151ABF6FEA00312E2B = {
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = 56U756R2L2;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1030;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -267,19 +221,11 @@
 			projectRoot = "";
 			targets = (
 				9409E1151ABF6FEA00312E2B /* Maxi80 */,
-				2C5545B91C1124DE00728469 /* Maxi80UITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2C5545B81C1124DE00728469 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9409E1141ABF6FEA00312E2B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -294,28 +240,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A9CC11C05F34B241082C4AC4 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Maxi80UITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		BDA55A1235C86924A668C7D4 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -344,30 +268,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Maxi80/Pods-Maxi80-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AWSAppSync/AWSAppSync.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSAuthCore/AWSAuthCore.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSMobileClient/AWSMobileClient.framework",
-				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Maxi80/Pods-Maxi80-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAppSync.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAuthCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProvider.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProviderASF.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSMobileClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Maxi80/Pods-Maxi80-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -377,14 +282,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2C5545B61C1124DE00728469 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2C5545BD1C1124DE00728469 /* SwiftRadioUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9409E1121ABF6FEA00312E2B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -401,57 +298,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		2C5545C01C1124DE00728469 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9409E1151ABF6FEA00312E2B /* Maxi80 */;
-			targetProxy = 2C5545BF1C1124DE00728469 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		2C5545C11C1124DE00728469 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9071C1636030F0E02747BDD4 /* Pods-Maxi80UITests.debug.xcconfig */;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = SwiftRadioUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = jonah.SwiftRadioUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = SwiftRadio;
-				USES_XCTRUNNER = YES;
-			};
-			name = Debug;
-		};
-		2C5545C21C1124DE00728469 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 942C52F45EB596B635008D2D /* Pods-Maxi80UITests.release.xcconfig */;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = SwiftRadioUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = jonah.SwiftRadioUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = SwiftRadio;
-				USES_XCTRUNNER = YES;
-			};
-			name = Release;
-		};
 		9409E1361ABF6FEA00312E2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -575,7 +422,7 @@
 					"$(PROJECT_DIR)/SwiftRadio",
 				);
 				INFOPLIST_FILE = SwiftRadio/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -604,7 +451,7 @@
 					"$(PROJECT_DIR)/SwiftRadio",
 				);
 				INFOPLIST_FILE = SwiftRadio/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -621,15 +468,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2C5545C31C1124DE00728469 /* Build configuration list for PBXNativeTarget "Maxi80UITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2C5545C11C1124DE00728469 /* Debug */,
-				2C5545C21C1124DE00728469 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		9409E1111ABF6FE900312E2B /* Build configuration list for PBXProject "Maxi80" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
