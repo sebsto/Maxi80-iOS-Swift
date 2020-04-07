@@ -6,8 +6,8 @@ target 'Maxi80' do
   use_frameworks!
 
   # Pods for Maxi80
-  pod 'AWSAppSync', ' ~> 2.14.0'
-  pod 'AWSCore', '~> 2.9.9'
-  pod 'AWSMobileClient', '~> 2.9.9'
+  pod 'AWSAppSync', ' ~> 3.0'
+  pod 'AWSCore', '~> 2.13'
+  pod 'AWSMobileClient', '~> 2.13'
   
 end
